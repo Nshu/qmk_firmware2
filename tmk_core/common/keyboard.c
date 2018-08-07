@@ -210,27 +210,31 @@ void keyboard_task(void)
 
     matrix_scan();
     if (is_keyboard_master()) {
+        // dprint("is_keyboard_master\n");
         for (uint8_t r = 0; r < MATRIX_ROWS; r++) {
             matrix_row = matrix_get_row(r);
             matrix_change = matrix_row ^ matrix_prev[r];
             if (matrix_change) {
-#ifdef MATRIX_HAS_GHOST
-                if (has_ghost_in_row(r, matrix_row)) {
-                    /* Keep track of whether ghosted status has changed for
-                    * debugging. But don't update matrix_prev until un-ghosted, or
-                    * the last key would be lost.
-                    */
-                    //if (debug_matrix && matrix_ghost[r] != matrix_row) {
-                    //    matrix_print();
-                    //}
+                dprint("matrix_change\n");
+                #ifdef MATRIX_HAS_GHOST
+                    if (has_ghost_in_row(r, matrix_row)) {
+                        /* Keep track of whether ghosted status has changed for
+                        * debugging. But don't update matrix_prev until un-ghosted, or
+                        * the last key would be lost.
+                        */
+                        //if (debug_matrix && matrix_ghost[r] != matrix_row) {
+                        //    matrix_print();
+                        //}
+                        //matrix_ghost[r] = matrix_row;
+                        continue;
+                    }
                     //matrix_ghost[r] = matrix_row;
-                    continue;
-                }
-                //matrix_ghost[r] = matrix_row;
-#endif
+                #endif
                 if (debug_matrix) matrix_print();
                 for (uint8_t c = 0; c < MATRIX_COLS; c++) {
                     if (matrix_change & ((matrix_row_t)1<<c)) {
+                        dprint("matrix_change & ((matrix_row_t)1<<c)\n");
+                        dprintf("(%d,%d)%d (%d)\n",r,c,(matrix_row & ((matrix_row_t)1<<c)),(timer_read() | 1));
                         action_exec((keyevent_t){
                             .key = (keypos_t){ .row = r, .col = c },
                             .pressed = (matrix_row & ((matrix_row_t)1<<c)),
@@ -238,6 +242,7 @@ void keyboard_task(void)
                         });
                         // record a processed key
                         matrix_prev[r] ^= ((matrix_row_t)1<<c);
+                        dprint("matrix_prev htuhnaohnh\n");
 #ifdef QMK_KEYS_PER_SCAN
                         // only jump out if we have processed "enough" keys.
                         if (++keys_processed >= QMK_KEYS_PER_SCAN)
@@ -255,7 +260,7 @@ void keyboard_task(void)
     if (!keys_processed)
 #endif
     action_exec(TICK);
-
+    
 MATRIX_LOOP_END:
 
 #ifdef MOUSEKEY_ENABLE
@@ -264,7 +269,7 @@ MATRIX_LOOP_END:
 #endif
 
 #ifdef PS2_MOUSE_ENABLE
-    ps2_mouse_task();
+    ps2_mouse_task()
 #endif
 
 #ifdef SERIAL_MOUSE_ENABLE

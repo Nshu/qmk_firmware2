@@ -48,51 +48,58 @@ int retro_tapping_counter = 0;
  *
  * FIXME: Needs documentation.
  */
+// uint8_t devent_i = 0;
 void action_exec(keyevent_t event)
-{
+{   
     if (!IS_NOEVENT(event)) {
-        dprint("\n---- action_exec: start -----\n");
-        dprint("EVENT: "); debug_event(event); dprintln();
-#ifdef RETRO_TAPPING
+        debug_event(event);
+        dprint("event received\n");
+    //     devent_i++;
+    //     xitoa(devent_i,(char)(10),1);
+    //     if(devent_i==2){
+    //         print("#####\n");
+    //         devent_i = 0;
+    //     }
+    #ifdef RETRO_TAPPING
         retro_tapping_counter++;
-#endif
+    #endif
     }
 
-#ifdef FAUXCLICKY_ENABLE
-    if (IS_PRESSED(event)) {
-        FAUXCLICKY_ACTION_PRESS;
-    }
-    if (IS_RELEASED(event)) {
-        FAUXCLICKY_ACTION_RELEASE;
-    }
-    fauxclicky_check();
-#endif
+    #ifdef FAUXCLICKY_ENABLE
+        if (IS_PRESSED(event)) {
+            FAUXCLICKY_ACTION_PRESS;
+        }
+        if (IS_RELEASED(event)) {
+            FAUXCLICKY_ACTION_RELEASE;
+        }
+        fauxclicky_check();
+    #endif
 
-#ifdef SWAP_HANDS_ENABLE
-    if (!IS_NOEVENT(event)) {
-        process_hand_swap(&event);
-    }
-#endif
+    #ifdef SWAP_HANDS_ENABLE
+        if (!IS_NOEVENT(event)) {
+            process_hand_swap(&event);
+        }
+    #endif
 
     keyrecord_t record = { .event = event };
 
-#if (defined(ONESHOT_TIMEOUT) && (ONESHOT_TIMEOUT > 0))
-    if (has_oneshot_layer_timed_out()) {
-        clear_oneshot_layer_state(ONESHOT_OTHER_KEY_PRESSED);
-    }
-    if (has_oneshot_mods_timed_out()) {
-        clear_oneshot_mods();
-    }
-#endif
+    #if (defined(ONESHOT_TIMEOUT) && (ONESHOT_TIMEOUT > 0))
+        if (has_oneshot_layer_timed_out()) {
+            clear_oneshot_layer_state(ONESHOT_OTHER_KEY_PRESSED);
+        }
+        if (has_oneshot_mods_timed_out()) {
+            clear_oneshot_mods();
+        }
+    #endif
 
-#ifndef NO_ACTION_TAPPING
-    action_tapping_process(record);
-#else
-    process_record(&record);
-    if (!IS_NOEVENT(record.event)) {
-        dprint("processed: "); debug_record(record); dprintln();
-    }
-#endif
+    #ifndef NO_ACTION_TAPPING
+        action_tapping_process(record);
+    #else
+        process_record(&record);
+        if (!IS_NOEVENT(record.event)) {
+            dprint("processed: "); debug_record(record); dprintln();
+        }
+    #endif
 }
 
 #ifdef SWAP_HANDS_ENABLE
@@ -931,6 +938,16 @@ bool is_tap_key(keypos_t key)
 void debug_event(keyevent_t event)
 {
     dprintf("%04X%c(%u)", (event.key.row<<8 | event.key.col), (event.pressed ? 'd' : 'u'), event.time);
+    // print("event.key.col: ");
+    // xitoa(event.key.col,(char)(10),5); print("\n");
+    // print("event.key.row: ");
+    // xitoa(event.key.row,(char)(10),5); print("\n");
+    // print("event.pressed: ");
+    // xitoa(event.pressed,(char)(2),5); print("\n");
+    // print("event.time:    ");
+    // xitoa(event.time,(char)(10),5); print("\n");
+    // if(event.pressed==0) print("######################\n");
+    // else print("\n");
 }
 
 /** \brief Debug print (FIXME: Needs better description)

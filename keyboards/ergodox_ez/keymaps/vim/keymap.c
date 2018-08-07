@@ -36,7 +36,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   */
   [NORMAL_MODE] = LAYOUT_ergodox(
     // Layer 2 Left Hand
-    X_____X,X_____X,X_____X,X_____X,X_____X,X_____X,X_____X,
+    DEBUG ,X_____X,X_____X,X_____X,X_____X,X_____X,X_____X,
     KC_TAB ,X_____X,VIM_W,  VIM_E  ,X_____X,X_____X,X_____X,
     X_____X,VIM_A  ,VIM_S  ,VIM_D  ,X_____X,X_____X,
     KC_LSFT,X_____X,VIM_X  ,VIM_C  ,VIM_V  ,VIM_B  ,X_____X,

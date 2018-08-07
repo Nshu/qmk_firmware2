@@ -1057,6 +1057,10 @@ int main(void)
 #endif
 
     print("Keyboard start.\n");
+    
+// debug_enable = true;
+    if(debug_enable)print("aaaaaaaaaaaaa");
+    xprintf("debug_enable: %d",debug_enable);
     while (1) {
         #if !defined(NO_USB_STARTUP_CHECK)
         while (USB_DeviceState == DEVICE_STATE_Suspended) {

@@ -1,1 +1,0 @@
-keyboards/ergodox_ez/keymaps/mine/keymap.c

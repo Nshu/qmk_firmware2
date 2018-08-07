@@ -3,11 +3,13 @@
 #include "action_layer.h"
 #include "version.h"
 #include "keymap_JIS.h"
+#include "timer.h"
 
 #define BASE 0 // default layer
 #define SHFT 1 // symbols
 #define SYMB 2 // symbols
 #define SYM2 3 // media keys
+#define SHCT 4 // short cut
 
 #define KC_ZH 0x35
 
@@ -15,28 +17,30 @@ enum custom_keycodes {
   PLACEHOLDER = SAFE_RANGE, // can always be here
   EPRM,
   VRSN,
-  RGB_SLD
+  RGB_SLD,
+  DPRINT,
+  AAA
 };
 
 //Assin keys for using as a US keyboard here, and convert US key to JIS key by keymap_JIS.h, 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 [BASE] = LAYOUT_ergodox(
 
-        KC_NO  , KC_F1  , KC_F2  , KC_F3  , KC_F4  , KC_F5  , KC_F6  ,
-        KC_NO  , KC_INS , KC_BSPC, KC_DEL , KC_P   , KC_Y   , LCTL(KC_C),
-        KC_HOME, KC_A   , KC_O   , KC_E   , KC_U   , KC_I   ,
+        MO(SHCT), KC_F1  , KC_F2  , KC_F3  , KC_F4  , KC_F5  , KC_F6  ,
+        MO(SHCT),KC_INS , KC_BSPC, KC_DEL , KC_P   , KC_Y   , LCTL(KC_C),
+ ALT_T(KC_HOME), KC_A   , KC_O   , KC_E   , KC_U   , KC_I   ,
 LT(SYM2,KC_END), KC_Z   , KC_Q   , KC_J   , KC_K   , KC_X   , LCTL(KC_V),
         KC_LGUI, KC_LEFT, KC_DOWN, KC_UP  , KC_RGHT,   
-                                                     KC_NO  , KC_NO  ,
-                                                              KC_NO  ,
+                                                     MO(SHCT), KC_LSFT,
+                                                              KC_RSFT,
                                                LT(SYMB,KC_TAB),CTL_T(KC_ENT),SFT_T(KC_ZH),
 
                  KC_F7  , KC_F8  , KC_F9  , KC_F10 , KC_F11 , KC_F12 , KC_NO  , 
                  KC_NO  , KC_F   , KC_G   , KC_C   , KC_R   , KC_PSCR, KC_NO  , 
-                          KC_D   , KC_H   , KC_T   , KC_N   , KC_S   , KC_PGUP,
+                          KC_D   , KC_H   , KC_T   , KC_N   , KC_S   , GUI_T(KC_PGUP),
                  KC_NO  , KC_B   , KC_M   , KC_W   , KC_V   , KC_L   , LT(SYM2,KC_PGDN),
                                    KC_MS_L, KC_MS_D, KC_MS_U, KC_MS_R, KC_RALT,
-                 KC_NO  , KC_NO  ,
+                 DPRINT , KC_NO  ,
                  KC_NO  ,
                  KC_APP ,CTL_T(KC_SPC),LT(SHFT,KC_ESC)
 ),
@@ -99,9 +103,36 @@ LT(SYM2,S(KC_END )),S(KC_Z   ), S(KC_Q   ), S(KC_J   ), S(KC_K   ), S(KC_X   ), 
                 KC_TRNS, 
                 KC_TRNS, KC_TRNS, KC_ESC 
 ),
+[SHCT] = LAYOUT_ergodox(
+		
+       KC_NO  , LCTL(KC_B),LCTL(LALT(KC_B)), LCTL(S(KC_B)), KC_NO  , KC_NO  , KC_NO  , 
+       KC_NO  , LCTL(KC_F), LCTL(S(KC_F)), KC_NO  , KC_NO  , KC_NO  , KC_NO  , 
+       KC_NO  , KC_NO  , KC_NO  , KC_NO  , KC_NO  , KC_NO  ,
+       KC_NO  , KC_NO  , KC_NO  , KC_NO  , KC_NO  , KC_NO  , KC_NO  , 
+       KC_NO  , KC_NO  , KC_NO  , KC_NO  , KC_NO  , 
+			                                              KC_NO  , KC_NO  , 
+																										         KC_NO  , 
+																			     KC_NO  , KC_NO  , KC_NO  , 
+
+                KC_NO  , KC_NO  , KC_NO  , KC_NO  , KC_NO  , KC_NO  , KC_NO  , 
+                KC_NO  , KC_NO  , KC_NO  , KC_NO  , KC_NO  , KC_NO  , KC_NO  , 
+                         KC_NO  , KC_NO  , KC_NO  , KC_NO  , KC_NO  , KC_NO  , 
+                KC_NO  , KC_NO  , KC_NO  , KC_NO  , KC_NO  , KC_NO  , KC_NO  , 
+                                  KC_NO  , KC_NO  , KC_NO  , KC_NO  , KC_NO  , 
+								KC_NO  , KC_NO  , 
+                KC_NO  , 
+                KC_NO  , KC_NO  , KC_NO   
+),
 
 };
 
+// uint8_t u_time(){
+//   struct timeval myTime;    // time_t構造体を定義．1970年1月1日からの秒数を格納するもの
+//   struct tm *time_st;       // tm構造体を定義．年月日時分秒をメンバ変数に持つ構造体
+//   gettimeofday(&myTime, NULL);    // 現在時刻を取得してmyTimeに格納．通常のtime_t構造体とsuseconds_tに値が代入される
+//   time_st = localtime(&myTime.tv_sec);    // time_t構造体を現地時間でのtm構造体に変換
+//   return 
+// }
 const uint16_t PROGMEM fn_actions[] = {
     [1] = ACTION_LAYER_TAP_TOGGLE(SYMB)                // FN1 - Momentary Layer 1 (Symbols)
 };
@@ -144,6 +175,53 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         #ifdef RGBLIGHT_ENABLE
           rgblight_mode(1);
         #endif
+      }
+      return false;
+      break;
+    case DPRINT:
+      if (record->event.pressed) {
+        print("keyboard_report->raw[i]\n");
+        for(int i=0;i<KEYBOARD_REPORT_KEYS;i++){
+          xitoa(i,(char)(10),2);
+          xitoa(keyboard_report->raw[i],(char)(2),8);
+          print("\n");
+        }
+
+
+        print("keyboard_report->mods\n");
+        xitoa(keyboard_report->mods,(char)(2),8);
+        print("\n");
+        
+        print("keyboard_report->reserved\n");
+        xitoa(keyboard_report->reserved,(char)(2),8);
+        print("\n");
+
+        print("keyboard_report->keys[i]\n");
+        for(int i=0;i<KEYBOARD_REPORT_KEYS;i++){
+          xitoa(i,(char)(10),2);
+          xitoa(keyboard_report->keys[i],(char)(2),8);
+          print("\n");
+        }
+        
+
+        print("keyboard_report->nkro.mods\n");
+        xitoa(keyboard_report->nkro.mods,(char)(2),8);
+        print("\n");
+
+        print("keyboard_report->nkro.bits[i]\n");
+        for(int i=0;i<KEYBOARD_REPORT_KEYS;i++){
+          xitoa(i,(char)(10),2);
+          xitoa(keyboard_report->nkro.bits[i],(char)(2),8);
+          print("\n");
+        }
+      }
+      return false;
+      break;
+    case AAA:
+      if (record->event.pressed) {
+        while ((timer_read() - record->event.time) < TAPPING_TERM){
+          
+        }
       }
       return false;
       break;

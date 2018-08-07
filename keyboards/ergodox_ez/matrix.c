@@ -110,6 +110,8 @@ void matrix_init(void)
     // initialize row and col
 
     mcp23018_status = init_mcp23018();
+    dprint("debug enable!");
+    dprintf("%d",debug_enable);
 
 
     unselect_rows();
