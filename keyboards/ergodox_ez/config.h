@@ -132,4 +132,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //#define DEBUG_MATRIX_SCAN_RATE
 #define TERMINAL_HELP
 
+#define DEBUG_ACTION
+
 #endif

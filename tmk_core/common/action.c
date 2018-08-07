@@ -50,10 +50,9 @@ int retro_tapping_counter = 0;
  */
 // uint8_t devent_i = 0;
 void action_exec(keyevent_t event)
-{   
+{ 
     if (!IS_NOEVENT(event)) {
         debug_event(event);
-        dprint("event received\n");
     //     devent_i++;
     //     xitoa(devent_i,(char)(10),1);
     //     if(devent_i==2){
@@ -97,7 +96,7 @@ void action_exec(keyevent_t event)
     #else
         process_record(&record);
         if (!IS_NOEVENT(record.event)) {
-            dprint("processed: "); debug_record(record); dprintln();
+            // dprint("processed: "); debug_record(record); dprintln();
         }
     #endif
 }
@@ -184,12 +183,12 @@ void process_record(keyrecord_t *record)
         return;
 
     action_t action = store_or_get_action(record->event.pressed, record->event.key);
-    dprint("ACTION: "); debug_action(action);
+    // dprint("ACTION: "); debug_action(action);
 #ifndef NO_ACTION_LAYER
-    dprint(" layer_state: "); layer_debug();
-    dprint(" default_layer_state: "); default_layer_debug();
+    // dprint(" layer_state: "); layer_debug();
+    // dprint(" default_layer_state: "); default_layer_debug();
 #endif
-    dprintln();
+    // dprintln();
 
     process_action(record, action);
 }
@@ -937,7 +936,7 @@ bool is_tap_key(keypos_t key)
  */
 void debug_event(keyevent_t event)
 {
-    dprintf("%04X%c(%u)", (event.key.row<<8 | event.key.col), (event.pressed ? 'd' : 'u'), event.time);
+    dprintf("event:%04X%c(%u)\n", (event.key.row<<8 | event.key.col), (event.pressed ? 'd' : 'u'), event.time);
     // print("event.key.col: ");
     // xitoa(event.key.col,(char)(10),5); print("\n");
     // print("event.key.row: ");

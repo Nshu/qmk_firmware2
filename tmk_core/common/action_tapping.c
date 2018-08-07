@@ -44,7 +44,7 @@ void action_tapping_process(keyrecord_t record)
 {
     if (process_tapping(&record)) {
         if (!IS_NOEVENT(record.event)) {
-            debug("processed: "); debug_record(record); debug("\n");
+            // debug("processed: "); debug_record(record); debug("\n");
         }
     } else {
         if (!waiting_buffer_enq(record)) {
