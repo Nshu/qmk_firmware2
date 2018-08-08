@@ -23,9 +23,9 @@ enum custom_keycodes {
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 [BASE] = LAYOUT_ergodox(
 
-        KC_NO  , KC_F1  , KC_F2  , KC_F3  , KC_F4  , KC_F5  , KC_F6  ,
-        KC_NO  , KC_INS , KC_BSPC, KC_DEL , KC_P   , KC_Y   , LCTL(KC_C),
-        KC_HOME, KC_A   , KC_O   , KC_E   , KC_U   , KC_I   ,
+       MO(SHCT), KC_F1  , KC_F2  , KC_F3  , KC_F4  , KC_F5  , KC_F6  ,
+       MO(SHCT), KC_INS , KC_BSPC, KC_DEL , KC_P   , KC_Y   , LCTL(KC_C),
+ ALT_T(KC_HOME), KC_A   , KC_O   , KC_E   , KC_U   , KC_I   ,
 LT(SYM2,KC_END), KC_Z   , KC_Q   , KC_J   , KC_K   , KC_X   , LCTL(KC_V),
         KC_LGUI, KC_LEFT, KC_DOWN, KC_UP  , KC_RGHT,   
                                                      KC_NO  , KC_NO  ,
