@@ -28,7 +28,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  ALT_T(KC_HOME), KC_A   , KC_O   , KC_E   , KC_U   , KC_I   ,
 LT(SYM2,KC_END), KC_Z   , KC_Q   , KC_J   , KC_K   , KC_X   , LCTL(KC_V),
         KC_LGUI, KC_LEFT, KC_DOWN, KC_UP  , KC_RGHT,   
-                                                     KC_NO  , KC_NO  ,
+                                                     MO(SHCT), KC_NO  ,
                                                               RSFT(KC_D),
                                                LT(SYMB,KC_TAB),CTL_T(KC_ENT),SFT_T(KC_ZH),
 
@@ -104,7 +104,7 @@ LT(SYM2,S(KC_END )),S(KC_Z   ), S(KC_Q   ), S(KC_J   ), S(KC_K   ), S(KC_X   ), 
 		
        KC_NO  , LCTL(KC_B),LCTL(LALT(KC_B)), LCTL(S(KC_B)), KC_NO  , KC_NO  , KC_NO  , 
        KC_NO  , LCTL(KC_F), LCTL(S(KC_F)), KC_ESC , KC_NO  , KC_NO  , KC_NO  , 
-       KC_NO  , KC_NO  , KC_NO  , KC_NO  , KC_NO  , KC_NO  ,
+       KC_NO  , KC_NO  , KC_NO  , KC_NO  , KC_BTN3, KC_RSFT,
        KC_NO  , KC_NO  , KC_NO  , KC_NO  , KC_NO  , KC_NO  , KC_NO  , 
        KC_NO  , KC_NO  , KC_NO  , KC_NO  , KC_NO  , 
 			                                              KC_NO  , KC_NO  , 
