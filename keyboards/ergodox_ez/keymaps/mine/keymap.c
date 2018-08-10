@@ -103,7 +103,7 @@ LT(SYM2,S(KC_END )),S(KC_Z   ), S(KC_Q   ), S(KC_J   ), S(KC_K   ), S(KC_X   ), 
 [SHCT] = LAYOUT_ergodox(
 		
        KC_NO  , LCTL(KC_B),LCTL(LALT(KC_B)), LCTL(S(KC_B)), KC_NO  , KC_NO  , KC_NO  , 
-       KC_NO  , LCTL(KC_F), LCTL(S(KC_F)), KC_NO  , KC_NO  , KC_NO  , KC_NO  , 
+       KC_NO  , LCTL(KC_F), LCTL(S(KC_F)), KC_ESC , KC_NO  , KC_NO  , KC_NO  , 
        KC_NO  , KC_NO  , KC_NO  , KC_NO  , KC_NO  , KC_NO  ,
        KC_NO  , KC_NO  , KC_NO  , KC_NO  , KC_NO  , KC_NO  , KC_NO  , 
        KC_NO  , KC_NO  , KC_NO  , KC_NO  , KC_NO  , 
