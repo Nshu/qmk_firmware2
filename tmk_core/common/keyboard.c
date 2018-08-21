@@ -230,9 +230,9 @@ void keyboard_task(void)
 #endif
                 if (debug_matrix) matrix_print();
                 for (uint8_t c = 0; c < MATRIX_COLS; c++) {
-                    if (matrix_change & ((matrix_row_t)1<<c)) 
+                    if (matrix_change & ((matrix_row_t)1<<c)) {
                         action_exec((keyevent_t){
-                            .key = key
+                            .key = { .row = r, .col = c },
                             .pressed = (matrix_row & ((matrix_row_t)1<<c)),
                             .time = (timer_read() | 1) /* time should not be 0 */
                         });
