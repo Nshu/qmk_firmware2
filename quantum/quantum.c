@@ -209,6 +209,8 @@ bool process_record_quantum(keyrecord_t *record) {
   #endif
     keycode = keymap_key_to_keycode(layer_switch_get_layer(key), key);
 
+    udprintf("keycode: %u\n",keycode);
+
     // This is how you use actions here
     // if (keycode == KC_LEAD) {
     //   action_t action;
