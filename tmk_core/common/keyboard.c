@@ -232,6 +232,9 @@ void keyboard_task(void)
                 for (uint8_t c = 0; c < MATRIX_COLS; c++) {
                     if (matrix_change & ((matrix_row_t)1<<c)) {
                         udprintln("enter action_exec");
+                        keypos_t key = (keypos_t){ .row = r, .col = c };
+                        uint16_t keycode = keymap_key_to_keycode(layer_switch_get_layer(key), key);
+                        udprintf("keycode fantom: %d\n",keycode);
                         action_exec((keyevent_t){
                             .key = (keypos_t){ .row = r, .col = c },
                             .pressed = (matrix_row & ((matrix_row_t)1<<c)),
