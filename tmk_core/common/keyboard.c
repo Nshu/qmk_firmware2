@@ -195,6 +195,37 @@ void keyboard_init(void) {
  *
  * This is repeatedly called as fast as possible.
  */
+
+#define QUEUE_SIZE 8
+static uint8_t queue_head = 0;
+static uint8_t queue_num = 0;
+typedef struct keycord_t{
+    bool pressed;
+    uint16_t keycode;
+} data_t;
+data_t data_t_false = 0;
+
+bool enqueue(data_t queue_data[QUEUE_SIZE],data_t enq_data) {
+    if (queue_num < QUEUE_SIZE) {
+        queue_data[(queue_head + queue_num) % QUEUE_SIZE] = enq_data;
+        queue_num ++;
+        return true;
+    } else {
+        return false;
+    }
+}
+data_t dequeue(data_t queue_data[QUEUE_SIZE]) {
+    data_t deq_data;
+    if (queue_num > 0) {
+        deq_data = queue_data[queue_head];
+        queue_head = (queue_head + 1) % QUEUE_SIZE;
+        queue_num --;
+        return deq_data;
+    } else {
+        return data_t_false;
+    }
+}
+
 void keyboard_task(void)
 {
     static matrix_row_t matrix_prev[MATRIX_ROWS];
@@ -258,7 +289,7 @@ void keyboard_task(void)
     // we can get here with some keys processed now.
     if (!keys_processed)
 #endif
-    action_exec(TICK);
+        action_exec(TICK);
 
 MATRIX_LOOP_END:
 
