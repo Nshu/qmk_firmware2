@@ -196,38 +196,42 @@ void keyboard_init(void) {
  * This is repeatedly called as fast as possible.
  */
 
-#define QUEUE_SIZE 8
-static uint8_t queue_head = 0;
-static uint8_t queue_num = 0;
-typedef struct keycord_t{
-    bool pressed;
-    uint16_t keycode;
-} data_t;
-data_t data_t_false = 0;
+#define QUE_SIZE 8
+static uint8_t que_head = 0;
+static uint8_t que_num = 0;
+typedef keyevent_t data_t;
 
-bool enqueue(data_t queue_data[QUEUE_SIZE],data_t enq_data) {
-    if (queue_num < QUEUE_SIZE) {
-        queue_data[(queue_head + queue_num) % QUEUE_SIZE] = enq_data;
-        queue_num ++;
+bool enque(data_t que_data[QUE_SIZE],data_t enq_data) {
+    if (que_num < QUE_SIZE) {
+        que_data[(que_head + que_num) % QUE_SIZE] = enq_data;
+        que_num ++;
         return true;
     } else {
         return false;
     }
 }
-data_t dequeue(data_t queue_data[QUEUE_SIZE]) {
+data_t deque(data_t que_data[QUE_SIZE]) {
     data_t deq_data;
-    if (queue_num > 0) {
-        deq_data = queue_data[queue_head];
-        queue_head = (queue_head + 1) % QUEUE_SIZE;
-        queue_num --;
+    if (que_num > 0) {
+        deq_data = que_data[que_head];
+        que_head = (que_head + 1) % QUE_SIZE;
+        que_num --;
         return deq_data;
     } else {
-        return data_t_false;
+        return TICK;
     }
+}
+
+uint16_t ktk(keypos_t key){
+    return keymap_key_to_keycode(layer_switch_get_layer(key), key);
 }
 
 void keyboard_task(void)
 {
+    static keyevent_t event_que[QUE_SIZE];
+    static keyevent_t deque_cache;
+
+
     static matrix_row_t matrix_prev[MATRIX_ROWS];
 #ifdef MATRIX_HAS_GHOST
   //  static matrix_row_t matrix_ghost[MATRIX_ROWS];
@@ -262,15 +266,23 @@ void keyboard_task(void)
                 if (debug_matrix) matrix_print();
                 for (uint8_t c = 0; c < MATRIX_COLS; c++) {
                     if (matrix_change & ((matrix_row_t)1<<c)) {
-                        udprintln("enter action_exec");
-                        keypos_t key = (keypos_t){ .row = r, .col = c };
-                        uint16_t keycode = keymap_key_to_keycode(layer_switch_get_layer(key), key);
-                        udprintf("keycode fantom: %d\n",keycode);
-                        action_exec((keyevent_t){
+
+//                        udprintln("enter action_exec");
+//                        keypos_t key = (keypos_t){ .row = r, .col = c };
+//                        uint16_t keycode = keymap_key_to_keycode(layer_switch_get_layer(key), key);
+//                        udprintf("keycode fantom: %d\n",keycode);
+
+                        keyevent_t current_event = (keyevent_t){
                             .key = (keypos_t){ .row = r, .col = c },
                             .pressed = (matrix_row & ((matrix_row_t)1<<c)),
                             .time = (timer_read() | 1) /* time should not be 0 */
-                        });
+                        };
+                        enque(event_que, current_event);
+
+                        if(ktk(deque_cache.key) == KC_T){
+                            udprintf("is_press: %d\n",deque_cache.pressed);
+                            udprint("t pressed\n");
+                        }
                         // record a processed key
                         matrix_prev[r] ^= ((matrix_row_t)1<<c);
 #ifdef QMK_KEYS_PER_SCAN
@@ -289,7 +301,10 @@ void keyboard_task(void)
     // we can get here with some keys processed now.
     if (!keys_processed)
 #endif
-        action_exec(TICK);
+        keyevent_t deque_event = deque(event_que);
+        action_exec(deque_event);
+        if(deque_event.pressed) deque_cache = deque_event;
+
 
 MATRIX_LOOP_END:
 
