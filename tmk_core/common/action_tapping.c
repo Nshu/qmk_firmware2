@@ -49,7 +49,6 @@ void action_tapping_process(keyrecord_t record)
         }
     } else {
         if (!waiting_buffer_enq(record)) {
-            udprintln("process_tapping(&record) false");
             // clear all in case of overflow.
             debug("OVERFLOW: CLEAR ALL STATES\n");
             clear_keyboard();

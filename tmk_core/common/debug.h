@@ -55,9 +55,9 @@ extern debug_config_t debug_config;
 
 //user defined debug print
 #ifdef USER_DEBUG
-#define udprint(s)                   print(s);
-#define udprintln(s)                 println(s);
-#define udprintf(fmt, ...)           xprintf(fmt, ##__VA_ARGS__);
+#define udprint(s)                   print(s)
+#define udprintln(s)                 println(s)
+#define udprintf(fmt, ...)           xprintf(fmt, ##__VA_ARGS__)
 
 #else
 #define udprint(s)
