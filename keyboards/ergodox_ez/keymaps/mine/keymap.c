@@ -4,7 +4,6 @@
 #include "version.h"
 #include "keymap_JIS.h"
 
-#define KC_ZH 0x35
 
 enum custom_keycodes {
   PLACEHOLDER = SAFE_RANGE, // can always be here

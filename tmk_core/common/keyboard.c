@@ -200,57 +200,77 @@ void keyboard_init(void) {
  */
 
 #define QUE_SIZE 8
-static uint8_t que_head = 0;
-static uint8_t que_num = 0;
+static uint8_t* event_que_head = 0;
+static uint8_t* event_que_num = 0;
+static uint8_t* hist_que_head = 0;
+static uint8_t* hist_que_num = 0;
 typedef keyevent_t data_t;
 
-bool enque(data_t que_data[QUE_SIZE], data_t enq_data) {
-    if (que_num < QUE_SIZE) {
-        que_data[(que_head + que_num) % QUE_SIZE] = enq_data;
-        que_num++;
+bool enque(data_t que_data[QUE_SIZE], data_t enq_data, uint8_t *que_head, uint8_t *que_num) {
+    if (*que_num < QUE_SIZE) {
+        que_data[(*que_head + *que_num) % QUE_SIZE] = enq_data;
+        (*que_num)++;
         return true;
     } else {
         return false;
     }
 }
 
-data_t deque(data_t que_data[QUE_SIZE]) {
+data_t unenque(data_t que_data[QUE_SIZE], uint8_t *que_head, uint8_t *que_num) {
+    data_t unenq_data;
+    if (*que_num > 0) {
+        unenq_data = que_data[(*que_head + *que_num - 1) % QUE_SIZE];
+        (*que_num)--;
+        return unenq_data;
+    } else {
+        return TICK;
+    }
+}
+
+data_t deque(data_t que_data[QUE_SIZE], uint8_t *que_head, uint8_t *que_num) {
     data_t deq_data;
-//    udprintf("que_num in deque: %u\n",que_num);
-    if (que_num > 0) {
-//        udprint("que_num > 0\n");
-        deq_data = que_data[que_head];
-        que_head = (que_head + 1) % QUE_SIZE;
-        que_num--;
+//    udprintf("*que_num in deque: %u\n",*que_num);
+    if (*que_num > 0) {
+//        udprint("*que_num > 0\n");
+        deq_data = que_data[*que_head];
+        *que_head = (*que_head + 1) % QUE_SIZE;
+        (*que_num)--;
         return deq_data;
     } else {
         return TICK;
     }
 }
 
-data_t read_que_head(data_t que_data[QUE_SIZE]) {
-    if (que_num > 0) {
-        return que_data[que_head];
+data_t read_que_head(data_t que_data[QUE_SIZE], uint8_t *que_head, uint8_t *que_num) {
+    if (*que_num > 0) {
+        return que_data[*que_head];
     } else {
         return TICK;
     }
 }
-void que_print(data_t que_data[QUE_SIZE],char* str) {
-    udprintf("=== que_print === %16s\n",str);
-    udprintf("que_head: %d\t",que_head);
-    udprintf("que_num: %d\n",que_num);
+
+void que_clear(uint8_t *que_head, uint8_t *que_num){
+    *que_head = 0;
+    *que_num = 0;
+}
+
+void que_print(data_t que_data[QUE_SIZE], char *str, uint8_t *que_head, uint8_t *que_num) {
+    udprintf("=== que_print === %16s\n", str);
+    udprintf("*que_head: %d\t", *que_head);
+    udprintf("*que_num: %d\n", *que_num);
     udprint("que:[");
-//    for(uint8_t i=que_head; i < que_head + QUE_SIZE; i++){
-//        if(i != que_head) udprint(",");
+//    for(uint8_t i=*que_head; i < *que_head + QUE_SIZE; i++){
+//        if(i != *que_head) udprint(",");
 //        udprintf(" %d",que_data[i % QUE_SIZE].time);
 //    }
-    for(uint8_t i=0; i < QUE_SIZE; i++){
-        if(i != 0) udprint(",");
-        udprintf(" %u",que_data[i].time);
+    for (uint8_t i = 0; i < QUE_SIZE; i++) {
+        if (i != 0) udprint(",");
+        udprintf(" %u", que_data[i].time);
     }
     udprint("]\n");
     udprintln("================");
 }
+
 uint16_t ktk(keypos_t key) {
     return keymap_key_to_keycode(layer_switch_get_layer(key), key);
 }
@@ -259,7 +279,8 @@ void keyboard_task(void) {
 //    udprint("=== keyboard_task start === ");
 //    udprintf("time: %u\n",timer_read() | 1);
     static keyevent_t event_que[QUE_SIZE];
-    static keyevent_t deque_cache;
+    static keyevent_t hist_que[QUE_SIZE];
+    static bool is_ime_on;
 
 
     static matrix_row_t matrix_prev[MATRIX_ROWS];
@@ -307,10 +328,11 @@ void keyboard_task(void) {
                                 .pressed = (matrix_row & ((matrix_row_t) 1 << c)),
                                 .time = (timer_read() | 1) /* time should not be 0 */
                         };
-                        enque(event_que, current_event) ? udprintf("enque ok. t: %u\n",(timer_read() | 1)) : udprintln("enque ng");
-                        que_print(event_que,"after enque");
+                        enque(event_que, current_event, event_que_head, event_que_num) ? udprintf("enque ok. t: %u\n", (timer_read() | 1)) : udprintln(
+                                "enque ng");
+                        que_print(event_que, "after enque", event_que_head, event_que_num);
 
-                        if (ktk(deque_cache.key) == KC_T) {
+                        if (is_ime_on) {
                         }
                         // record a processed key
                         matrix_prev[r] ^= ((matrix_row_t) 1 << c);
@@ -330,21 +352,47 @@ void keyboard_task(void) {
     // we can get here with some keys processed now.
     if (!keys_processed)
 #endif
-    keyevent_t current_que_head = read_que_head(event_que);
-    if(current_que_head.key.col != TICK.key.col){ //deque_event != TICK
+    keyevent_t current_que_head = read_que_head(event_que, event_que_head, event_que_num);
+    if (current_que_head.key.col != TICK.key.col){ //deque_event != TICK
 //        udprintf("deque_event.time: %u\n",deque_event.time);
         if (TIMER_DIFF_16((timer_read() | 1), current_que_head.time) > 10) {
-            udprintf("current_que_head.time: %u\n",current_que_head.time);
-            udprintf("current time.   : %u\n",(timer_read() | 1));
+            udprintf("current_que_head.time: %u\n", current_que_head.time);
+            udprintf("current time.   : %u\n", (timer_read() | 1));
 
-            keyevent_t deque_event = deque(event_que);
-            action_exec(deque_event);
-//            udprintf("deque ok. t: %u\n",(timer_read() | 1));
-            que_print(event_que,"327");
-            if (deque_event.pressed) deque_cache = deque_event;
+            keyevent_t action_event = deque(event_que, event_que_head, event_que_num);
+            action_exec(action_event);
+
+            if (action_event.pressed) {
+                switch (ktk(action_event.key)) {
+                    case KC_A ... KC_Z:
+                        enque(hist_que, action_event, hist_que_head, hist_que_num);
+                        break;
+
+                    case KC_BSPC:
+                        unenque(hist_que, hist_que_head, hist_que_num);
+                        break;
+
+                    case KC_ZH:
+                        if(is_ime_on) is_ime_on = false;
+                        else is_ime_on = true;
+                        que_clear(hist_que_head, hist_que_num);
+                        break;
+
+                    case KC_CAPSLOCK:
+                        is_ime_on = true;
+                        que_clear(hist_que_head, hist_que_num);
+                        break;
+
+                    default:
+                        que_clear(hist_que_head, hist_que_num);
+                        break;
+                }
+            }
         }
     }
-    else action_exec(TICK);
+    else {
+        action_exec(TICK);
+    }
 
 
     MATRIX_LOOP_END:

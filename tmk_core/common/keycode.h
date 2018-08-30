@@ -25,6 +25,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 /* FIXME: Add doxygen comments here */
 
+#define KC_ZH 0x35
+
 #define IS_ERROR(code)           (KC_ROLL_OVER <= (code) && (code) <= KC_UNDEFINED)
 #define IS_ANY(code)             (KC_A         <= (code) && (code) <= 0xFF)
 #define IS_KEY(code)             (KC_A         <= (code) && (code) <= KC_EXSEL)
