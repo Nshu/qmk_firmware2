@@ -24,13 +24,30 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "avr/timer_avr.h"
 #endif
 
-
+// a is after b
 #define TIMER_DIFF(a, b, max)   ((a) >= (b) ?  (a) - (b) : (max) - (b) + (a))
 #define TIMER_DIFF_8(a, b)      TIMER_DIFF(a, b, UINT8_MAX)
 #define TIMER_DIFF_16(a, b)     TIMER_DIFF(a, b, UINT16_MAX)
 #define TIMER_DIFF_32(a, b)     TIMER_DIFF(a, b, UINT32_MAX)
 #define TIMER_DIFF_RAW(a, b)    TIMER_DIFF_8(a, b)
 
+// a + b
+#define TIMER_ADD(a, b, max)   ((a) + (b) <= max ? (a) + (b) : (b) - ((max) - (a)))
+#define TIMER_ADD_8(a, b)      TIMER_ADD(a, b, UINT8_MAX)
+#define TIMER_ADD_16(a, b)     TIMER_ADD(a, b, UINT16_MAX)
+#define TIMER_ADD_32(a, b)     TIMER_ADD(a, b, UINT32_MAX)
+
+// a is after b
+#define TIMER_MEAN(a, b, max)   TIMER_ADD((b),TIMER_DIFF((a),(b),(max))/2,(max))
+#define TIMER_MEAN_8(a, b)      TIMER_MEAN(a, b, UINT8_MAX)
+#define TIMER_MEAN_16(a, b)     TIMER_MEAN(a, b, UINT16_MAX)
+#define TIMER_MEAN_32(a, b)     TIMER_MEAN(a, b, UINT32_MAX)
+
+// a is after b
+#define TIMER_RATE(a, b, max, div, put)   TIMER_ADD((b),TIMER_DIFF((a),(b),(max))/(div) * (put),(max))
+#define TIMER_RATE_8(a, b, div, put)      TIMER_RATE(a, b, UINT8_MAX, div, put)
+#define TIMER_RATE_16(a, b, div, put)     TIMER_RATE(a, b, UINT16_MAX, div, put)
+#define TIMER_RATE_32(a, b, div, put)     TIMER_RATE(a, b, UINT32_MAX, div, put)
 
 #ifdef __cplusplus
 extern "C" {

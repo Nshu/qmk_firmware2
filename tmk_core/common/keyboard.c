@@ -200,10 +200,10 @@ void keyboard_init(void) {
  */
 
 #define QUE_SIZE 8
-static uint8_t* event_que_head = 0;
-static uint8_t* event_que_num = 0;
-static uint8_t* hist_que_head = 0;
-static uint8_t* hist_que_num = 0;
+static uint8_t *event_que_head = 0;
+static uint8_t *event_que_num = 0;
+static uint8_t *hist_que_head = 0;
+static uint8_t *hist_que_num = 0;
 typedef keyevent_t data_t;
 
 bool enque(data_t que_data[QUE_SIZE], data_t enq_data, uint8_t *que_head, uint8_t *que_num) {
@@ -249,7 +249,7 @@ data_t read_que_head(data_t que_data[QUE_SIZE], uint8_t *que_head, uint8_t *que_
     }
 }
 
-void que_clear(uint8_t *que_head, uint8_t *que_num){
+void que_clear(uint8_t *que_head, uint8_t *que_num) {
     *que_head = 0;
     *que_num = 0;
 }
@@ -273,6 +273,30 @@ void que_print(data_t que_data[QUE_SIZE], char *str, uint8_t *que_head, uint8_t 
 
 uint16_t ktk(keypos_t key) {
     return keymap_key_to_keycode(layer_switch_get_layer(key), key);
+}
+
+bool is_convert_action_event(keyevent_t action_event, bool is_ime_on) {
+    if (is_ime_on) {
+        if ((action_event == KC_A) || \
+            (action_event == KC_I) || \
+            (action_event == KC_U) || \
+            (action_event == KC_E) || \
+            (action_event == KC_O)) {
+            uint8_t que_last = que_head + que_num - 1;
+            keyevent_t last_event = hist_que[que_last];
+            if (ktk(last_event.key) == KC_C) {
+                uint16_t bs_time_pressed = last_event.time;
+                uint16_t k_time  = TIMER_MEAN_16(action_event.time,last_event.time);
+                uint16_t bs_time_release = last_event.time;
+                action_exec((keyevent_t)
+                    .time = bs_time,
+                    .pressed = )
+            }
+        }
+    } else {
+        return false;
+    }
+
 }
 
 void keyboard_task(void) {
@@ -328,12 +352,12 @@ void keyboard_task(void) {
                                 .pressed = (matrix_row & ((matrix_row_t) 1 << c)),
                                 .time = (timer_read() | 1) /* time should not be 0 */
                         };
-                        enque(event_que, current_event, event_que_head, event_que_num) ? udprintf("enque ok. t: %u\n", (timer_read() | 1)) : udprintln(
+                        enque(event_que, current_event, event_que_head, event_que_num) ? udprintf("enque ok. t: %u\n",
+                                                                                                  (timer_read() | 1))
+                                                                                       : udprintln(
                                 "enque ng");
                         que_print(event_que, "after enque", event_que_head, event_que_num);
 
-                        if (is_ime_on) {
-                        }
                         // record a processed key
                         matrix_prev[r] ^= ((matrix_row_t) 1 << c);
 #ifdef QMK_KEYS_PER_SCAN
@@ -360,12 +384,15 @@ void keyboard_task(void) {
             udprintf("current time.   : %u\n", (timer_read() | 1));
 
             keyevent_t action_event = deque(event_que, event_que_head, event_que_num);
+
+            //convert action_event
             action_exec(action_event);
 
             if (action_event.pressed) {
                 switch (ktk(action_event.key)) {
                     case KC_A ... KC_Z:
                         enque(hist_que, action_event, hist_que_head, hist_que_num);
+                        deque(hist_que, hist_que_head, hist_que_num);
                         break;
 
                     case KC_BSPC:
@@ -373,7 +400,7 @@ void keyboard_task(void) {
                         break;
 
                     case KC_ZH:
-                        if(is_ime_on) is_ime_on = false;
+                        if (is_ime_on) is_ime_on = false;
                         else is_ime_on = true;
                         que_clear(hist_que_head, hist_que_num);
                         break;
