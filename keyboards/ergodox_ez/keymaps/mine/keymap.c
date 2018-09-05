@@ -3,6 +3,7 @@
 #include "action_layer.h"
 #include "version.h"
 #include "keymap_JIS.h"
+#include "keymap_jp.h"
 
 
 enum custom_keycodes {
@@ -22,11 +23,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_NO  , KC_F2  , KC_F3  , KC_F4  , KC_F5  , KC_F6  , KC_NO  , 
         KC_F1  , KC_LEFT, KC_BSPC, KC_DEL , KC_P   , KC_Y   , LCTL(KC_C),
         KC_ENT , KC_A   , KC_O   , KC_E   , KC_U   , KC_I   ,
-        KC_ZH  , KC_Z   , KC_Q   , KC_J   , KC_K   , KC_X   , LCTL(KC_V),
+        KC_SPC , KC_Z   , KC_Q   , KC_J   , KC_K   , KC_X   , LCTL(KC_V),
         KC_LGUI, KC_DOWN, KC_UP  , KC_LSFT, KC_LCTL, //KC_MS_L, KC_MS_D,   
                                                      KC_NO  , KC_NO  , 
                                                               KC_NO  , 
-                                              MO(1), KC_SPC , KC_LALT,
+                                              MO(1), JP_KANA, KC_LALT,
 
                  KC_NO  , KC_F7  , KC_F8  , KC_F9  , KC_F10 , KC_F11 , KC_NO  , 
                  KC_NO  , KC_F   , KC_G   , KC_C   , KC_R   , KC_RGHT, KC_F12 , 
@@ -35,7 +36,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                    KC_RCTL, KC_RSFT, KC_MS_U, KC_MS_R, KC_RGUI,
                  KC_NO  , KC_NO  ,
                  KC_NO  ,
-                 KC_RALT,KC_SPC , MO(2)
+                 KC_RALT, JP_ZHTG, MO(2)
 ),
 [1] = LAYOUT_ergodox(
        
