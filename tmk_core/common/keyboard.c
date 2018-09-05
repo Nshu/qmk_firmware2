@@ -251,7 +251,7 @@ void que_clear(uint8_t *que_head, uint8_t *que_num) {
 }
 
 void que_print(data_t que_data[QUE_SIZE], char *str, uint8_t *que_head, uint8_t *que_num) {
-    udprintf("=== que_print === %16s\n", str);
+    udprintf("=== que_print === %32s\n", str);
     udprintf("*que_head: %d\t", *que_head);
     udprintf("*que_num: %d\n", *que_num);
     udprint("que:[");
@@ -272,6 +272,7 @@ uint16_t ktk(keypos_t key) {
 }
 
 #define atk(keycode)    alphabet_to_keypos[keycode - 0x04]
+#define bspc_keypos     alphabet_to_keypos[24]
 
 void keycode_event_action(uint8_t keycode, uint16_t pressed_time, uint16_t release_time) {
     // [0]=kc_a's keypos ... [23]= kc_z's keypos [24] = kc_backspace's keypos
@@ -297,23 +298,37 @@ void keycode_event_action(uint8_t keycode, uint16_t pressed_time, uint16_t relea
             }
         }
     }
+    keypos_t keypos = TICK.key;
+    switch(keycode){
+        case KC_A ... KC_Z:
+            keypos = atk(keycode);
+            break;
+        case KC_BSPC:
+            keypos = alphabet_to_keypos[24];
+            break;
+        default:
+            break;
+    }
     action_exec((keyevent_t) {
             .time = pressed_time,
             .pressed = true,
-            .key = atk(keycode)
+            .key = keypos
     });
     action_exec((keyevent_t) {
             .time = release_time,
             .pressed = false,
-            .key = atk(keycode)
+            .key = keypos
     });
 }
 
 bool is_convert_action_event(keyevent_t action_event, bool is_ime_on, keyevent_t *hist_que, uint8_t *hist_que_head,
                              uint8_t *hist_que_num) {
+    udprintf("ime: %d\n",is_ime_on);
+    udprintf("action_event.pressed: %d\n",action_event.pressed);
     if (is_ime_on) {
         if (action_event.pressed) {
             uint8_t current_keycode = ktk(action_event.key);
+            udprintv(current_keycode,%u);
             if ((current_keycode == KC_A) || \
                 (current_keycode == KC_I) || \
                 (current_keycode == KC_U) || \
@@ -333,6 +348,7 @@ bool is_convert_action_event(keyevent_t action_event, bool is_ime_on, keyevent_t
                         uint16_t bs_t_release = TIMER_RATE_16(a_t, l_t, 5, 2);
                         uint16_t k_t_pressed = TIMER_RATE_16(a_t, l_t, 5, 3);
                         uint16_t k_t_release = TIMER_RATE_16(a_t, l_t, 5, 4);
+                        udprintln("nnnnnn");
 
                         keycode_event_action(KC_BSPC, bs_t_pressed, bs_t_release);
                         keycode_event_action(KC_K, k_t_pressed, k_t_release);
@@ -407,11 +423,14 @@ void keyboard_task(void) {
 //    udprintf("time: %u\n",timer_read() | 1);
     static keyevent_t event_que[QUE_SIZE];
     static keyevent_t hist_que[QUE_SIZE];
-    static uint8_t *event_que_head = 0;
-    static uint8_t *event_que_num = 0;
-    static uint8_t *hist_que_head = 0;
-    static uint8_t *hist_que_num = 0;
     static bool is_ime_on;
+    static uint8_t event_que_head = 0;
+    static uint8_t event_que_num = 0;
+    static uint8_t hist_que_head = 0;
+    static uint8_t hist_que_num = 0;
+//    udprintf("event_que_head: %u\n",event_que_head);
+
+//    que_print(event_que,"declaration",&event_que_head,&event_que_num);
 
 
     static matrix_row_t matrix_prev[MATRIX_ROWS];
@@ -459,11 +478,11 @@ void keyboard_task(void) {
                                 .pressed = (matrix_row & ((matrix_row_t) 1 << c)),
                                 .time = (timer_read() | 1) /* time should not be 0 */
                         };
-                        enque(event_que, current_event, event_que_head, event_que_num) ? udprintf("enque ok. t: %u\n",
+                        enque(event_que, current_event, &event_que_head, &event_que_num) ? udprintf("enque ok. t: %u\n",
                                                                                                   (timer_read() | 1))
                                                                                        : udprintln(
                                 "enque ng");
-                        que_print(event_que, "after enque", event_que_head, event_que_num);
+//                        que_print(event_que, "after enque", &event_que_head, &event_que_num);
 
                         // record a processed key
                         matrix_prev[r] ^= ((matrix_row_t) 1 << c);
@@ -472,7 +491,7 @@ void keyboard_task(void) {
                         if (++keys_processed >= QMK_KEYS_PER_SCAN)
 #endif
                         // process a key per task call
-                        goto MATRIX_LOOP_END;
+//                        goto MATRIX_LOOP_END;
                     }
                 }
             }
@@ -483,43 +502,51 @@ void keyboard_task(void) {
     // we can get here with some keys processed now.
     if (!keys_processed)
 #endif
-    keyevent_t current_que_head = read_que_head(event_que, event_que_head, event_que_num);
-    if (current_que_head.key.col != TICK.key.col){ //deque_event != TICK
-//        udprintf("deque_event.time: %u\n",deque_event.time);
-        if (TIMER_DIFF_16((timer_read() | 1), current_que_head.time) > 10) {
-            udprintf("current_que_head.time: %u\n", current_que_head.time);
-            udprintf("current time.   : %u\n", (timer_read() | 1));
+//    MATRIX_LOOP_END:
 
-            keyevent_t action_event = deque(event_que, event_que_head, event_que_num);
+
+    keyevent_t current_que_head = read_que_head(event_que, &event_que_head, &event_que_num);
+//    static uint8_t prev_que_head_key_col = 0;
+//    if(current_que_head.key.col != prev_que_head_key_col)
+//            udprintf("current_que_head.key.col: %u\n",current_que_head.key.col);
+//    prev_que_head_key_col = current_que_head.key.col;
+    if (current_que_head.key.col != TICK.key.col){ //deque_event != TICK
+        if (TIMER_DIFF_16((timer_read() | 1), current_que_head.time) > 10) {
+//            que_print(event_que,"after 10msec check.",&event_que_head,&event_que_num);
+//            udprintf("current_que_head.time: %u\n", current_que_head.time);
+//            udprintf("current time.   : %u\n", (timer_read() | 1));
+
+            keyevent_t action_event = deque(event_que, &event_que_head, &event_que_num);
 
             //convert action_event
-            if (!is_convert_action_event(action_event, is_ime_on, hist_que, hist_que_head, hist_que_num))
+            udprint("\n=== enter is_convert_action_event ===\n");
+            if (!is_convert_action_event(action_event, is_ime_on, hist_que, &hist_que_head, &hist_que_num))
                 action_exec(action_event);
+            udprint("=====================================\n\n");
 
             if (action_event.pressed) {
                 switch (ktk(action_event.key)) {
                     case KC_A ... KC_Z:
-                        enque(hist_que, action_event, hist_que_head, hist_que_num);
-                        deque(hist_que, hist_que_head, hist_que_num);
+                        enque(hist_que, action_event, &hist_que_head, &hist_que_num);
                         break;
 
                     case KC_BSPC:
-                        unenque(hist_que, hist_que_head, hist_que_num);
+                        unenque(hist_que, &hist_que_head, &hist_que_num);
                         break;
 
                     case KC_ZH:
                         if (is_ime_on) is_ime_on = false;
                         else is_ime_on = true;
-                        que_clear(hist_que_head, hist_que_num);
+                        que_clear(&hist_que_head, &hist_que_num);
                         break;
 
                     case KC_CAPSLOCK:
                         is_ime_on = true;
-                        que_clear(hist_que_head, hist_que_num);
+                        que_clear(&hist_que_head, &hist_que_num);
                         break;
 
                     default:
-                        que_clear(hist_que_head, hist_que_num);
+                        que_clear(&hist_que_head, &hist_que_num);
                         break;
                 }
             }
@@ -530,7 +557,6 @@ void keyboard_task(void) {
     }
 
 
-    MATRIX_LOOP_END:
 
 #ifdef MOUSEKEY_ENABLE
     // mousekey repeat & acceleration
