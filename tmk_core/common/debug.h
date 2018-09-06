@@ -64,6 +64,7 @@ extern debug_config_t debug_config;
 #define udprint(s)
 #define udprintln(s)
 #define udprintf(fmt, ...)
+#define udprintv(value, specifier)
 
 #endif
 

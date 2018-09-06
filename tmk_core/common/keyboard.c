@@ -30,6 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "sendchar.h"
 #include "eeconfig.h"
 #include "backlight.h"
+#include "keymap_jp.h"
 #include "action_layer.h"
 
 #ifdef BOOTMAGIC_ENABLE
@@ -277,7 +278,7 @@ uint16_t ktk(keypos_t key) {
 void keycode_event_action(uint8_t keycode, uint16_t pressed_time, uint16_t release_time) {
     // [0]=kc_a's keypos ... [23]= kc_z's keypos [24] = kc_backspace's keypos
     static keypos_t alphabet_to_keypos[25] = {};
-    if (!alphabet_to_keypos[0].row) {
+    if (alphabet_to_keypos[0].row == 0) {
         for (uint8_t r = 0; r < MATRIX_ROWS; r++) {
             for (uint8_t c = 0; c < MATRIX_COLS; c++) {
                 keypos_t current_keypos = {
@@ -309,6 +310,13 @@ void keycode_event_action(uint8_t keycode, uint16_t pressed_time, uint16_t relea
         default:
             break;
     }
+    udprintln("----------------------------");
+    for(uint8_t i=0; i<25; i++){
+        udprintf("alphabet_to_keypos[%d] : r = %u, c = %u\n",i,alphabet_to_keypos[i].row,alphabet_to_keypos[i].col);
+    }
+    udprintln("----------------------------");
+    udprintv(keypos.col,%u);
+    udprintv(keypos.row,%u);
     action_exec((keyevent_t) {
             .time = pressed_time,
             .pressed = true,
@@ -541,6 +549,7 @@ void keyboard_task(void) {
                         break;
 
                     case KC_CAPSLOCK:
+                    case JP_KANA:
                         is_ime_on = true;
                         que_clear(&hist_que_head, &hist_que_num);
                         break;
