@@ -18,86 +18,93 @@ enum custom_keycodes {
 };
 
 //Assin keys for using as a US keyboard here, and convert US key to JIS key by keymap_JIS.h, 
-const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
-[0] = LAYOUT_ergodox(
+const uint16_t PROGMEM
+keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
+[0] =
+LAYOUT_ergodox(
 
-        KC_NO  , KC_F2  , KC_F3  , KC_F4  , KC_F5  , KC_F6  , KC_NO  , 
-        KC_F1  , KC_LEFT, KC_BSPC, KC_DEL , KC_P   , KC_Y   , LCTL(KC_C),
-        KC_SPC , KC_A   , KC_O   , KC_E   , KC_U   , KC_I   ,
-        KC_ENT , KC_Z   , KC_Q   , KC_J   , KC_K   , KC_X   , LCTL(KC_V),
-        KC_LGUI, KC_DOWN, KC_UP  , KC_LSFT, KC_LCTL, //KC_MS_L, KC_MS_D,   
-                                                     KC_NO  , KC_NO  , 
-                                                              KC_NO  ,
-                                              MO(1), JP_KANA, KC_LALT,
+        KC_NO, KC_F2, KC_F3, KC_F4, KC_F5, KC_F6, KC_NO,
+        KC_F1, KC_LEFT, KC_BSPC, KC_DEL, KC_P, KC_Y, LCTL(KC_C),
+        KC_SPC, KC_A, KC_O, KC_E, KC_U, KC_I,
+        KC_ENT, KC_Z, KC_Q, KC_J, KC_K, KC_X, LCTL(KC_V),
+        KC_LGUI, KC_DOWN, KC_UP, KC_LSFT, KC_LCTL, //KC_MS_L, KC_MS_D,
+        KC_NO, KC_NO,
+        KC_NO,
+        MO(1), JP_KANA, KC_LALT,
 
-                 KC_NO  , KC_F7  , KC_F8  , KC_F9  , KC_F10 , KC_F11 , KC_NO  , 
-                 KC_NO  , KC_F   , KC_G   , KC_C   , KC_R   , KC_RGHT, KC_F12 , 
-                          KC_D   , KC_H   , KC_T   , KC_N   , KC_S   , KC_ESC ,
-                 KC_NO  , KC_B   , KC_M   , KC_W   , KC_V   , KC_L   , KC_TAB ,
-                                   KC_RCTL, KC_RSFT, JP_MHEN, JP_HENK, KC_RGUI,
-                 KC_NO  , KC_NO  ,
-                 KC_NO  ,
-                 KC_RALT, IME_OFF, MO(2)
+        KC_NO, KC_F7, KC_F8, KC_F9, KC_F10, KC_F11, KC_NO,
+        KC_NO, KC_F, KC_G, KC_C, KC_R, KC_RGHT, KC_F12,
+        KC_D, KC_H, KC_T, KC_N, KC_S, KC_ESC,
+        KC_NO, KC_B, KC_M, KC_W, KC_V, KC_L, KC_TAB,
+        KC_RCTL, KC_RSFT, JP_MHEN, JP_HENK, KC_RGUI,
+        KC_NO, KC_NO,
+        KC_NO,
+        KC_RALT, IME_OFF, MO(2)
 ),
-[1] = LAYOUT_ergodox(
-       
-       KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, 
-       KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, JA_HASH, JA_GRV , KC_TRNS,  
-       KC_TRNS, JA_BSLS, JA_DOT , JA_COLN, BACKL  , KC_5   , 
-       KC_TRNS, KC_1   , KC_2   , KC_3   , KC_4   , KC_LCTL, KC_TRNS,  
-       KC_TRNS, KC_TRNS, KC_TRNS, S(KC_CAPS), KC_WH_D,
-                                                    KC_TRNS, KC_TRNS, 
-                                                             KC_TRNS, 
-                                           KC_TRNS, KC_TRNS, KC_TRNS, 
-       
-                KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, 
-                KC_TRNS, JA_AT  , JA_PLUS, JA_ASTR, JA_PERC, KC_TRNS, KC_TRNS,   
-                         KC_6   , BACKL  , JA_EQL , JA_MINS, JA_SLSH, KC_TRNS, 
-                KC_TRNS, KC_RCTL, KC_7   , KC_8   , KC_9   , KC_0   , KC_TRNS, 
-                                  KC_TRNS, KC_TRNS, KC_NO  , KC_NO  , KC_TRNS, 
-                KC_TRNS, KC_TRNS,  
-                KC_TRNS, 
-                KC_TRNS, KC_TRNS, KC_TRNS
-),
-[2] = LAYOUT_ergodox(
-    
-       KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, 
-       KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, JA_EXLM, KC_LALT, KC_TRNS, 
-       KC_TRNS, JA_LCBR, JA_LBRC, JA_LPRN, BACKL  , JA_LT  , 
-       KC_TRNS, JA_CIRC, JA_DLR , JA_TILD, JA_PIPE, KC_LSFT, KC_TRNS, 
-       KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, 
-                                                    KC_TRNS, KC_TRNS, 
-                                                             KC_TRNS,  
-                                           KC_TRNS, KC_TRNS, KC_TRNS,   
-    
-                KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, 
-                KC_TRNS, KC_RALT, JA_QUES, JA_DQT , JA_QUOT, KC_NO  , KC_TRNS, 
-                         JA_GT  , BACKL  , JA_SCLN, JA_COMM, JA_UNDS, KC_TRNS,
-                KC_TRNS, KC_RSFT, JA_AMPR, JA_RPRN, JA_RBRC, JA_RCBR, KC_TRNS, 
-                                  KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, 
-                KC_TRNS, KC_TRNS, 
-                KC_TRNS, 
-                KC_TRNS, KC_TRNS, KC_TRNS
-),
-[3] = LAYOUT_ergodox(
-		
-       KC_NO  , LCTL(KC_B),LCTL(LALT(KC_B)), LCTL(S(KC_B)), KC_NO  , KC_NO  , KC_NO  , 
-       KC_NO  , LCTL(KC_F), LCTL(S(KC_F)), KC_ESC , KC_NO  , KC_NO  , KC_NO  , 
-       KC_NO  , KC_NO  , KC_NO  , KC_NO  , KC_BTN3, KC_RSFT,
-       KC_NO  , KC_NO  , KC_NO  , KC_NO  , KC_NO  , KC_NO  , KC_NO  , 
-       KC_NO  , KC_NO  , KC_NO  , KC_NO  , KC_NO  , 
-			                                              KC_NO  , KC_NO  , 
-																										         KC_NO  , 
-																			     KC_NO  , KC_NO  , KC_NO  , 
+[1] =
+LAYOUT_ergodox(
 
-                KC_NO  , KC_NO  , KC_NO  , KC_NO  , KC_NO  , KC_NO  , KC_NO  , 
-                KC_NO  , KC_NO  , KC_NO  , KC_NO  , KC_NO  , KC_NO  , KC_NO  , 
-                         KC_NO  , KC_NO  , KC_NO  , KC_NO  , KC_NO  , KC_NO  , 
-                KC_NO  , KC_NO  , KC_NO  , KC_NO  , KC_NO  , KC_NO  , KC_NO  , 
-                                  KC_NO  , KC_NO  , KC_NO  , KC_NO  , KC_NO  , 
-								KC_NO  , KC_NO  , 
-                KC_NO  , 
-                KC_NO  , KC_NO  , KC_NO   
+        KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
+        KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, JA_HASH, JA_GRV, KC_TRNS,
+        KC_TRNS,
+JA_BSLS, JA_DOT , JA_COLN, BACKL  , KC_5   ,
+KC_TRNS, KC_1   , KC_2   , KC_3   , KC_4   , KC_LCTL, KC_TRNS,
+KC_TRNS, KC_TRNS, KC_TRNS,
+S(KC_CAPS), KC_WH_D,
+        KC_TRNS, KC_TRNS,
+        KC_TRNS,
+        KC_TRNS, KC_TRNS, KC_TRNS,
+
+        KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
+        KC_TRNS, JA_AT, JA_PLUS, JA_ASTR, JA_PERC, KC_TRNS, KC_TRNS,
+        KC_6, BACKL, JA_EQL, JA_MINS, JA_SLSH, KC_TRNS,
+        KC_TRNS, KC_RCTL, KC_7, KC_8, KC_9, KC_0, KC_TRNS,
+        KC_TRNS, KC_TRNS, KC_NO, KC_NO, KC_TRNS,
+        KC_TRNS, KC_TRNS,
+        KC_TRNS,
+        KC_TRNS, KC_TRNS, KC_TRNS
+),
+[2] =
+LAYOUT_ergodox(
+
+        KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
+        KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, JA_EXLM, KC_LALT, KC_TRNS,
+        KC_TRNS, JA_LCBR, JA_LBRC, JA_LPRN, BACKL, JA_LT,
+        KC_TRNS, JA_CIRC, JA_DLR, JA_TILD, JA_PIPE, KC_LSFT, KC_TRNS,
+        KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
+        KC_TRNS, KC_TRNS,
+        KC_TRNS,
+        KC_TRNS, KC_TRNS, KC_TRNS,
+
+        KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
+        KC_TRNS, KC_RALT, JA_QUES, JA_DQT, JA_QUOT, KC_NO, KC_TRNS,
+        JA_GT, BACKL, JA_SCLN, JA_COMM, JA_UNDS, KC_TRNS,
+        KC_TRNS, KC_RSFT, JA_AMPR, JA_RPRN, JA_RBRC, JA_RCBR, KC_TRNS,
+        KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
+        KC_TRNS, KC_TRNS,
+        KC_TRNS,
+        KC_TRNS, KC_TRNS, KC_TRNS
+),
+[3] =
+LAYOUT_ergodox(
+
+        KC_NO, LCTL(KC_B), LCTL(LALT(KC_B)), LCTL(S(KC_B)), KC_NO, KC_NO, KC_NO,
+        KC_NO, LCTL(KC_F), LCTL(S(KC_F)), KC_ESC, KC_NO, KC_NO, KC_NO,
+        KC_NO, KC_NO, KC_NO, KC_NO, KC_BTN3, KC_RSFT,
+        KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,
+        KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,
+        KC_NO, KC_NO,
+        KC_NO,
+        KC_NO, KC_NO, KC_NO,
+
+        KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,
+        KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,
+        KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,
+        KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,
+        KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,
+        KC_NO, KC_NO,
+        KC_NO,
+        KC_NO, KC_NO, KC_NO
 ),
 
 
@@ -157,11 +164,11 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             return false;
         case IME_OFF:
             if (record->event.pressed) {
-                if(is_ime_on){
-                    // X_GRAVE = X_ZHTG
-                    SEND_STRING(SS_TAP(X_GRAVE));
-                    is_ime_on = false;
-                }
+                // X_INT2 = X_KANA  IME on
+                SEND_STRING(SS_TAP(X_INT2));
+                // X_GRAVE = X_ZHTG IME toggle = off
+                SEND_STRING(SS_TAP(X_GRAVE));
+                is_ime_on = false;
             }
             return false;
         case LAYER1:
