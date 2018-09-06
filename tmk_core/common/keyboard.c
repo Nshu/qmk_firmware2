@@ -246,6 +246,17 @@ data_t read_que_head(data_t que_data[QUE_SIZE], uint8_t *que_head, uint8_t *que_
     }
 }
 
+data_t read_que_from_last(data_t que_data[QUE_SIZE], uint8_t *que_head, uint8_t *que_num, uint8_t from_last){
+    if (*que_num > 0) {
+        uint8_t virtual_que_last_index = *que_head + *que_num - 1;
+        uint8_t virtual_que_index = virtual_que_last_index - from_last;
+        uint8_t real_que_index = virtual_que_index % QUE_SIZE;
+        return que_data[real_que_index];
+    } else {
+        return TICK;
+    }
+}
+
 void que_clear(uint8_t *que_head, uint8_t *que_num) {
     *que_head = 0;
     *que_num = 0;
@@ -273,11 +284,11 @@ uint16_t ktk(keypos_t key) {
 }
 
 #define atk(keycode)    alphabet_to_keypos[keycode - 0x04]
-#define bspc_keypos     alphabet_to_keypos[24]
+#define bspc_keypos     alphabet_to_keypos[26]
 
 void keycode_event_action(uint8_t keycode, uint16_t pressed_time, uint16_t release_time) {
-    // [0]=kc_a's keypos ... [23]= kc_z's keypos [24] = kc_backspace's keypos
-    static keypos_t alphabet_to_keypos[25] = {};
+    // [0]=kc_a's keypos ... [25]= kc_z's keypos [26] = kc_backspace's keypos
+    static keypos_t alphabet_to_keypos[27] = {};
     if (alphabet_to_keypos[0].row == 0) {
         for (uint8_t r = 0; r < MATRIX_ROWS; r++) {
             for (uint8_t c = 0; c < MATRIX_COLS; c++) {
@@ -285,13 +296,15 @@ void keycode_event_action(uint8_t keycode, uint16_t pressed_time, uint16_t relea
                         .row = r,
                         .col = c
                 };
-                switch (/* keycode = */pgm_read_word(&keymaps[0][r][c])) {
+                uint8_t current_keycode = pgm_read_word(&keymaps[0][r][c]);
+//                udprintf("r = %2u. c = %2u, keycode = %3u\n",r,c,current_keycode);
+                switch (current_keycode) {
                     case KC_A ... KC_Z:
                         // kc_a = 0x04 ... kc_z = 0x17
-                        alphabet_to_keypos[keycode - 0x04] = current_keypos;
+                        alphabet_to_keypos[current_keycode - 0x04] = current_keypos;
                         break;
                     case KC_BSPC:
-                        alphabet_to_keypos[24] = current_keypos;
+                        alphabet_to_keypos[26] = current_keypos;
                         break;
                     default:
                         break;
@@ -305,18 +318,18 @@ void keycode_event_action(uint8_t keycode, uint16_t pressed_time, uint16_t relea
             keypos = atk(keycode);
             break;
         case KC_BSPC:
-            keypos = alphabet_to_keypos[24];
+            keypos = alphabet_to_keypos[26];
             break;
         default:
             break;
     }
-    udprintln("----------------------------");
-    for(uint8_t i=0; i<25; i++){
-        udprintf("alphabet_to_keypos[%d] : r = %u, c = %u\n",i,alphabet_to_keypos[i].row,alphabet_to_keypos[i].col);
-    }
-    udprintln("----------------------------");
-    udprintv(keypos.col,%u);
-    udprintv(keypos.row,%u);
+//    udprintln("----------------------------");
+//    for(uint8_t i=0; i<25; i++){
+//        udprintf("alphabet_to_keypos[%2d] : r = %u, c = %u\n",i,alphabet_to_keypos[i].row,alphabet_to_keypos[i].col);
+//    }
+//    udprintln("----------------------------");
+//    udprintv(keypos.col,%u);
+//    udprintv(keypos.row,%u);
     action_exec((keyevent_t) {
             .time = pressed_time,
             .pressed = true,
@@ -343,8 +356,7 @@ bool is_convert_action_event(keyevent_t action_event, bool is_ime_on, keyevent_t
                 (current_keycode == KC_E) || \
                 (current_keycode == KC_O)) {
 
-                uint8_t hist_que_last = *hist_que_head + *hist_que_num - 1;
-                keyevent_t last_event = hist_que[hist_que_last];
+                keyevent_t last_event = read_que_from_last(hist_que, hist_que_head, hist_que_num, 0);
 
                 uint16_t l_t = last_event.time;
                 uint16_t a_t = action_event.time;
@@ -356,7 +368,6 @@ bool is_convert_action_event(keyevent_t action_event, bool is_ime_on, keyevent_t
                         uint16_t bs_t_release = TIMER_RATE_16(a_t, l_t, 5, 2);
                         uint16_t k_t_pressed = TIMER_RATE_16(a_t, l_t, 5, 3);
                         uint16_t k_t_release = TIMER_RATE_16(a_t, l_t, 5, 4);
-                        udprintln("nnnnnn");
 
                         keycode_event_action(KC_BSPC, bs_t_pressed, bs_t_release);
                         keycode_event_action(KC_K, k_t_pressed, k_t_release);
@@ -365,7 +376,7 @@ bool is_convert_action_event(keyevent_t action_event, bool is_ime_on, keyevent_t
                     }
 
                     case KC_L: {
-                        keyevent_t last2_event = hist_que[hist_que_last - 1];
+                        keyevent_t last2_event = read_que_from_last(hist_que, hist_que_head , hist_que_num ,1);
                         switch (ktk(last2_event.key)) {
                             case KC_T: {
                                 switch (current_keycode) {
@@ -529,13 +540,17 @@ void keyboard_task(void) {
             //convert action_event
             udprint("\n=== enter is_convert_action_event ===\n");
             if (!is_convert_action_event(action_event, is_ime_on, hist_que, &hist_que_head, &hist_que_num))
+                que_print(hist_que, "after convert", &hist_que_head,&hist_que_num);
                 action_exec(action_event);
             udprint("=====================================\n\n");
 
             if (action_event.pressed) {
                 switch (ktk(action_event.key)) {
                     case KC_A ... KC_Z:
-                        enque(hist_que, action_event, &hist_que_head, &hist_que_num);
+                        if(!enque(hist_que, action_event, &hist_que_head, &hist_que_num)) {
+                            deque(hist_que, &hist_que_head, &hist_que_num);
+                            enque(hist_que, action_event, &hist_que_head, &hist_que_num);
+                        }
                         break;
 
                     case KC_BSPC:
