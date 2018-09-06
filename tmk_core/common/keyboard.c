@@ -437,12 +437,12 @@ bool is_convert_action_event(keyevent_t action_event, bool is_ime_on, keyevent_t
     return false;
 }
 
+bool is_ime_on = false;
 void keyboard_task(void) {
 //    udprint("=== keyboard_task start === ");
 //    udprintf("time: %u\n",timer_read() | 1);
     static keyevent_t event_que[QUE_SIZE];
     static keyevent_t hist_que[QUE_SIZE];
-    static bool is_ime_on;
     static uint8_t event_que_head = 0;
     static uint8_t event_que_num = 0;
     static uint8_t hist_que_head = 0;
