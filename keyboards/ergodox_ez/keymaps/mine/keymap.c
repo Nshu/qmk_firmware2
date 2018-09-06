@@ -11,6 +11,7 @@ enum custom_keycodes {
   EPRM,
   VRSN,
   RGB_SLD,
+  IME_OFF,
   LAYER1,
   LAYER2,
   BACKL
@@ -26,7 +27,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_ENT , KC_Z   , KC_Q   , KC_J   , KC_K   , KC_X   , LCTL(KC_V),
         KC_LGUI, KC_DOWN, KC_UP  , KC_LSFT, KC_LCTL, //KC_MS_L, KC_MS_D,   
                                                      KC_NO  , KC_NO  , 
-                                                              KC_NO  , 
+                                                              KC_NO  ,
                                               MO(1), JP_KANA, KC_LALT,
 
                  KC_NO  , KC_F7  , KC_F8  , KC_F9  , KC_F10 , KC_F11 , KC_NO  , 
@@ -36,7 +37,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                    KC_RCTL, KC_RSFT, KC_MS_U, KC_MS_R, KC_RGUI,
                  KC_NO  , KC_NO  ,
                  KC_NO  ,
-                 KC_RALT, JP_ZHTG, MO(2)
+                 KC_RALT, IME_OFF, MO(2)
 ),
 [1] = LAYOUT_ergodox(
        
@@ -102,70 +103,86 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 };
 
-const uint16_t PROGMEM fn_actions[] = {
-    [1] = ACTION_LAYER_TAP_TOGGLE(1)                // FN1 - Momentary Layer 1 (Symbols)
+const uint16_t PROGMEM
+fn_actions[] = {
+[1] = ACTION_LAYER_TAP_TOGGLE(1)                // FN1 - Momentary Layer 1 (Symbols)
 };
 
-const macro_t *action_get_macro(keyrecord_t *record, uint8_t id, uint8_t opt)
-{
-  // MACRODOWN only works in this function
-  switch(id) {
-    case 0:
-      if (record->event.pressed) {
-        SEND_STRING (QMK_KEYBOARD "/" QMK_KEYMAP " @ " QMK_VERSION);
-      }
-      break;
-    case 1:
-      if (record->event.pressed) { // For resetting EEPROM
-        eeconfig_init();
-      }
-      break;
-  }
-  return MACRO_NONE;
+const macro_t *action_get_macro(keyrecord_t *record, uint8_t id, uint8_t opt) {
+    // MACRODOWN only works in this function
+    switch (id) {
+        case 0:
+            if (record->event.pressed) {
+                SEND_STRING(QMK_KEYBOARD
+                "/"
+                QMK_KEYMAP
+                " @ "
+                QMK_VERSION);
+            }
+            break;
+        case 1:
+            if (record->event.pressed) { // For resetting EEPROM
+                eeconfig_init();
+            }
+            break;
+    }
+    return MACRO_NONE;
 };
+
+extern bool is_ime_on;
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-  switch (keycode) {
-    // dynamically generate these.
-    case EPRM:
-      if (record->event.pressed) {
-        eeconfig_init();
-      }
-      return false;
-      break;
-    case VRSN:
-      if (record->event.pressed) {
-        SEND_STRING (QMK_KEYBOARD "/" QMK_KEYMAP " @ " QMK_VERSION);
-      }
-      return false;
-      break;
-    case RGB_SLD:
-      if (record->event.pressed) {
-        #ifdef RGBLIGHT_ENABLE
-          rgblight_mode(1);
-        #endif
-      }
-      return false;
-    case LAYER1:
-      if (record->event.pressed) {
-      }
-      return false;
-    case LAYER2:
-      if (record->event.pressed) {
-      }
-      return false;
-    case BACKL:
-      if (record->event.pressed) {
-      }
-      return false;
-  }
-  return true;
+    switch (keycode) {
+        // dynamically generate these.
+        case EPRM:
+            if (record->event.pressed) {
+                eeconfig_init();
+            }
+            return false;
+        case VRSN:
+            if (record->event.pressed) {
+                SEND_STRING(QMK_KEYBOARD
+                "/"
+                QMK_KEYMAP
+                " @ "
+                QMK_VERSION);
+            }
+            return false;
+        case RGB_SLD:
+            if (record->event.pressed) {
+#ifdef RGBLIGHT_ENABLE
+                rgblight_mode(1);
+#endif
+            }
+            return false;
+        case IME_OFF:
+            if (record->event.pressed) {
+                if(is_ime_on){
+                    SEND_STRING(SS_TAP(X_GRAVE));
+                    is_ime_on = false;
+                }
+            }
+            return false;
+        case LAYER1:
+            if (record->event.pressed) {
+            }
+            return false;
+        case LAYER2:
+            if (record->event.pressed) {
+            }
+            return false;
+        case BACKL:
+            if (record->event.pressed) {
+            }
+            return false;
+    }
+    return true;
 }
 
 // Runs just one time when the keyboard initializes.
 void matrix_init_user(void) {
 #ifdef RGBLIGHT_COLOR_LAYER_0
-  rgblight_setrgb(RGBLIGHT_COLOR_LAYER_0);
+    rgblight_setrgb(RGBLIGHT_COLOR_LAYER_0);
 #endif
 };
 
@@ -176,72 +193,72 @@ void matrix_scan_user(void) {
 
 // Runs whenever there is a layer state change.
 uint32_t layer_state_set_user(uint32_t state) {
-  ergodox_board_led_off();
-  ergodox_right_led_1_off();
-  ergodox_right_led_2_off();
-  ergodox_right_led_3_off();
+    ergodox_board_led_off();
+    ergodox_right_led_1_off();
+    ergodox_right_led_2_off();
+    ergodox_right_led_3_off();
 
-  uint8_t layer = biton32(state);
-  switch (layer) {
-      case 0:
-        #ifdef RGBLIGHT_COLOR_LAYER_0
-          rgblight_setrgb(RGBLIGHT_COLOR_LAYER_0);
-        #else
-        #ifdef RGBLIGHT_ENABLE
-          rgblight_init();
-        #endif
-        #endif
-        break;
-      case 1:
-        ergodox_right_led_1_on();
-        #ifdef RGBLIGHT_COLOR_LAYER_1
-          rgblight_setrgb(RGBLIGHT_COLOR_LAYER_1);
-        #endif
-        break;
-      case 2:
-        ergodox_right_led_2_on();
-        #ifdef RGBLIGHT_COLOR_LAYER_2
-          rgblight_setrgb(RGBLIGHT_COLOR_LAYER_2);
-        #endif
-        break;
-      case 3:
-        ergodox_right_led_3_on();
-        #ifdef RGBLIGHT_COLOR_LAYER_3
-          rgblight_setrgb(RGBLIGHT_COLOR_LAYER_3);
-        #endif
-        break;
-      case 4:
-        ergodox_right_led_1_on();
-        ergodox_right_led_2_on();
-        #ifdef RGBLIGHT_COLOR_LAYER_4
-          rgblight_setrgb(RGBLIGHT_COLOR_LAYER_4);
-        #endif
-        break;
-      case 5:
-        ergodox_right_led_1_on();
-        ergodox_right_led_3_on();
-        #ifdef RGBLIGHT_COLOR_LAYER_5
-          rgblight_setrgb(RGBLIGHT_COLOR_LAYER_5);
-        #endif
-        break;
-      case 6:
-        ergodox_right_led_2_on();
-        ergodox_right_led_3_on();
-        #ifdef RGBLIGHT_COLOR_LAYER_6
-          rgblight_setrgb(RGBLIGHT_COLOR_LAYER_6);
-        #endif
-        break;
-      case 7:
-        ergodox_right_led_1_on();
-        ergodox_right_led_2_on();
-        ergodox_right_led_3_on();
-        #ifdef RGBLIGHT_COLOR_LAYER_7
-          rgblight_setrgb(RGBLIGHT_COLOR_LAYER_6);
-        #endif
-        break;
-      default:
-        break;
+    uint8_t layer = biton32(state);
+    switch (layer) {
+        case 0:
+#ifdef RGBLIGHT_COLOR_LAYER_0
+            rgblight_setrgb(RGBLIGHT_COLOR_LAYER_0);
+#else
+#ifdef RGBLIGHT_ENABLE
+            rgblight_init();
+#endif
+#endif
+            break;
+        case 1:
+            ergodox_right_led_1_on();
+#ifdef RGBLIGHT_COLOR_LAYER_1
+            rgblight_setrgb(RGBLIGHT_COLOR_LAYER_1);
+#endif
+            break;
+        case 2:
+            ergodox_right_led_2_on();
+#ifdef RGBLIGHT_COLOR_LAYER_2
+            rgblight_setrgb(RGBLIGHT_COLOR_LAYER_2);
+#endif
+            break;
+        case 3:
+            ergodox_right_led_3_on();
+#ifdef RGBLIGHT_COLOR_LAYER_3
+            rgblight_setrgb(RGBLIGHT_COLOR_LAYER_3);
+#endif
+            break;
+        case 4:
+            ergodox_right_led_1_on();
+            ergodox_right_led_2_on();
+#ifdef RGBLIGHT_COLOR_LAYER_4
+            rgblight_setrgb(RGBLIGHT_COLOR_LAYER_4);
+#endif
+            break;
+        case 5:
+            ergodox_right_led_1_on();
+            ergodox_right_led_3_on();
+#ifdef RGBLIGHT_COLOR_LAYER_5
+            rgblight_setrgb(RGBLIGHT_COLOR_LAYER_5);
+#endif
+            break;
+        case 6:
+            ergodox_right_led_2_on();
+            ergodox_right_led_3_on();
+#ifdef RGBLIGHT_COLOR_LAYER_6
+            rgblight_setrgb(RGBLIGHT_COLOR_LAYER_6);
+#endif
+            break;
+        case 7:
+            ergodox_right_led_1_on();
+            ergodox_right_led_2_on();
+            ergodox_right_led_3_on();
+#ifdef RGBLIGHT_COLOR_LAYER_7
+            rgblight_setrgb(RGBLIGHT_COLOR_LAYER_6);
+#endif
+            break;
+        default:
+            break;
     }
 
-  return state;
+    return state;
 };
