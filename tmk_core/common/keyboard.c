@@ -488,6 +488,8 @@ bool is_convert_action_event(keyevent_t action_event, bool is_ime_on, keyevent_t
                     keycode_event_action(KC_O, o_t_pressed, o_t_release);
                     return true;
                 }
+                default:
+                    return false;
 
             }
         }
@@ -599,9 +601,10 @@ void keyboard_task(void) {
 
             //convert action_event
             udprint("\n=== enter is_convert_action_event ===\n");
-            if (!is_convert_action_event(action_event, is_ime_on, hist_que, &hist_que_head, &hist_que_num))
+            if (!is_convert_action_event(action_event, is_ime_on, hist_que, &hist_que_head, &hist_que_num)) {
                 que_print(hist_que, "after convert", &hist_que_head, &hist_que_num);
-            action_exec(action_event);
+                action_exec(action_event);
+            }
             udprint("=====================================\n\n");
 
             if (action_event.pressed) {
@@ -617,14 +620,9 @@ void keyboard_task(void) {
                         unenque(hist_que, &hist_que_head, &hist_que_num);
                         break;
 
-                    case KC_ZH:
-                        if (is_ime_on) is_ime_on = false;
-                        else is_ime_on = true;
-                        que_clear(&hist_que_head, &hist_que_num);
-                        break;
-
                     case KC_CAPSLOCK:
                     case JP_KANA:
+                    case JP_HENK:
                         is_ime_on = true;
                         que_clear(&hist_que_head, &hist_que_num);
                         break;
