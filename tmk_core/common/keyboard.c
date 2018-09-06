@@ -246,7 +246,7 @@ data_t read_que_head(data_t que_data[QUE_SIZE], uint8_t *que_head, uint8_t *que_
     }
 }
 
-data_t read_que_from_last(data_t que_data[QUE_SIZE], uint8_t *que_head, uint8_t *que_num, uint8_t from_last){
+data_t read_que_from_last(data_t que_data[QUE_SIZE], uint8_t *que_head, uint8_t *que_num, uint8_t from_last) {
     if (*que_num > 0) {
         uint8_t virtual_que_last_index = *que_head + *que_num - 1;
         uint8_t virtual_que_index = virtual_que_last_index - from_last;
@@ -313,7 +313,7 @@ void keycode_event_action(uint8_t keycode, uint16_t pressed_time, uint16_t relea
         }
     }
     keypos_t keypos = TICK.key;
-    switch(keycode){
+    switch (keycode) {
         case KC_A ... KC_Z:
             keypos = atk(keycode);
             break;
@@ -344,12 +344,12 @@ void keycode_event_action(uint8_t keycode, uint16_t pressed_time, uint16_t relea
 
 bool is_convert_action_event(keyevent_t action_event, bool is_ime_on, keyevent_t *hist_que, uint8_t *hist_que_head,
                              uint8_t *hist_que_num) {
-    udprintf("ime: %d\n",is_ime_on);
-    udprintf("action_event.pressed: %d\n",action_event.pressed);
+    udprintf("ime: %d\n", is_ime_on);
+    udprintf("action_event.pressed: %d\n", action_event.pressed);
     if (is_ime_on) {
         if (action_event.pressed) {
             uint8_t current_keycode = ktk(action_event.key);
-            udprintv(current_keycode,%u);
+            udprintv(current_keycode, %u);
             if ((current_keycode == KC_A) || \
                 (current_keycode == KC_I) || \
                 (current_keycode == KC_U) || \
@@ -376,7 +376,7 @@ bool is_convert_action_event(keyevent_t action_event, bool is_ime_on, keyevent_t
                     }
 
                     case KC_L: {
-                        keyevent_t last2_event = read_que_from_last(hist_que, hist_que_head , hist_que_num ,1);
+                        keyevent_t last2_event = read_que_from_last(hist_que, hist_que_head, hist_que_num, 1);
                         switch (ktk(last2_event.key)) {
                             case KC_T: {
                                 switch (current_keycode) {
@@ -414,6 +414,27 @@ bool is_convert_action_event(keyevent_t action_event, bool is_ime_on, keyevent_t
                                         return false;
                                 }
                             }
+
+                            case KC_D: {
+                                switch (current_keycode) {
+                                    case KC_I: { // dli > dexi
+                                        uint16_t bs_t_pressed = TIMER_RATE_16(a_t, l_t, 7, 1);
+                                        uint16_t bs_t_release = TIMER_RATE_16(a_t, l_t, 7, 2);
+                                        uint16_t e_t_pressed = TIMER_RATE_16(a_t, l_t, 7, 3);
+                                        uint16_t e_t_release = TIMER_RATE_16(a_t, l_t, 7, 4);
+                                        uint16_t x_t_pressed = TIMER_RATE_16(a_t, l_t, 7, 5);
+                                        uint16_t x_t_release = TIMER_RATE_16(a_t, l_t, 7, 6);
+
+                                        keycode_event_action(KC_BSPC, bs_t_pressed, bs_t_release);
+                                        keycode_event_action(KC_E, e_t_pressed, e_t_release);
+                                        keycode_event_action(KC_X, x_t_pressed, x_t_release);
+                                        action_exec(action_event);
+                                        return true;
+                                    }
+                                    default:
+                                        return false;
+                                }
+                            }
                             default: // ex) la > za
                             {
                                 uint16_t bs_t_pressed = TIMER_RATE_16(a_t, l_t, 5, 1);
@@ -438,6 +459,7 @@ bool is_convert_action_event(keyevent_t action_event, bool is_ime_on, keyevent_t
 }
 
 bool is_ime_on = false;
+
 void keyboard_task(void) {
 //    udprint("=== keyboard_task start === ");
 //    udprintf("time: %u\n",timer_read() | 1);
@@ -498,8 +520,8 @@ void keyboard_task(void) {
                                 .time = (timer_read() | 1) /* time should not be 0 */
                         };
                         enque(event_que, current_event, &event_que_head, &event_que_num) ? udprintf("enque ok. t: %u\n",
-                                                                                                  (timer_read() | 1))
-                                                                                       : udprintln(
+                                                                                                    (timer_read() | 1))
+                                                                                         : udprintln(
                                 "enque ng");
 //                        que_print(event_que, "after enque", &event_que_head, &event_que_num);
 
@@ -540,14 +562,14 @@ void keyboard_task(void) {
             //convert action_event
             udprint("\n=== enter is_convert_action_event ===\n");
             if (!is_convert_action_event(action_event, is_ime_on, hist_que, &hist_que_head, &hist_que_num))
-                que_print(hist_que, "after convert", &hist_que_head,&hist_que_num);
-                action_exec(action_event);
+                que_print(hist_que, "after convert", &hist_que_head, &hist_que_num);
+            action_exec(action_event);
             udprint("=====================================\n\n");
 
             if (action_event.pressed) {
                 switch (ktk(action_event.key)) {
                     case KC_A ... KC_Z:
-                        if(!enque(hist_que, action_event, &hist_que_head, &hist_que_num)) {
+                        if (!enque(hist_que, action_event, &hist_que_head, &hist_que_num)) {
                             deque(hist_que, &hist_que_head, &hist_que_num);
                             enque(hist_que, action_event, &hist_que_head, &hist_que_num);
                         }
@@ -579,7 +601,6 @@ void keyboard_task(void) {
     else {
         action_exec(TICK);
     }
-
 
 
 #ifdef MOUSEKEY_ENABLE
