@@ -30,7 +30,7 @@ LAYOUT_ergodox(
         KC_LGUI, KC_DOWN, KC_UP, KC_LSFT, KC_LCTL, //KC_MS_L, KC_MS_D,
         KC_NO, KC_NO,
         KC_NO,
-        MO(1), JP_KANA, KC_LALT,
+        MO(1), IME_OFF, KC_LALT,
 
         KC_NO, KC_F7, KC_F8, KC_F9, KC_F10, KC_F11, KC_NO,
         KC_NO, KC_F, KC_G, KC_C, KC_R, KC_RGHT, KC_F12,
@@ -39,7 +39,7 @@ LAYOUT_ergodox(
         KC_RCTL, KC_RSFT, JP_MHEN, JP_HENK, KC_RGUI,
         KC_NO, KC_NO,
         KC_NO,
-        KC_RALT, IME_OFF, MO(2)
+        KC_RALT, JP_KANA, MO(2)
 ),
 [1] =
 LAYOUT_ergodox(
