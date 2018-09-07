@@ -15,6 +15,7 @@
  */
 
 #include "quantum.h"
+#include "debug.h"
 #ifdef PROTOCOL_LUFA
 #include "outputselect.h"
 #endif
@@ -208,6 +209,9 @@ bool process_record_quantum(keyrecord_t *record) {
     } else
   #endif
     keycode = keymap_key_to_keycode(layer_switch_get_layer(key), key);
+    udprintv(layer_switch_get_layer(key),%d);
+
+//    keycode = keymap_key_to_keycode(ulayer, key);
 
     // This is how you use actions here
     // if (keycode == KC_LEAD) {
