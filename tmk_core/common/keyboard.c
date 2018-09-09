@@ -364,17 +364,42 @@ bool is_convert_action_event(keyevent_t action_event, bool is_ime_on, keyevent_t
                 case KC_E:
                 case KC_O: {
                     switch (ktk(last_event.key)) {
-                        case KC_C: // ex) ca > ka
+                        case KC_C:
                         {
-                            uint16_t bs_t_pressed = TIMER_RATE_16(a_t, l_t, 5, 1);
-                            uint16_t bs_t_release = TIMER_RATE_16(a_t, l_t, 5, 2);
-                            uint16_t k_t_pressed = TIMER_RATE_16(a_t, l_t, 5, 3);
-                            uint16_t k_t_release = TIMER_RATE_16(a_t, l_t, 5, 4);
+                            keyevent_t last2_event = read_que_from_last(hist_que, hist_que_head, hist_que_num, 1);
+                            switch (ktk(last2_event.key)) {
+                                case KC_C: // ex) cca > kka
+                                {
+                                    uint16_t bs_t_pressed1 = TIMER_RATE_16(a_t, l_t, 9, 1);
+                                    uint16_t bs_t_release1 = TIMER_RATE_16(a_t, l_t, 9, 2);
+                                    uint16_t bs_t_pressed2 = TIMER_RATE_16(a_t, l_t, 9, 3);
+                                    uint16_t bs_t_release2 = TIMER_RATE_16(a_t, l_t, 9, 4);
+                                    uint16_t k_t_pressed1 = TIMER_RATE_16(a_t, l_t, 9, 5);
+                                    uint16_t k_t_release1 = TIMER_RATE_16(a_t, l_t, 9, 6);
+                                    uint16_t k_t_pressed2 = TIMER_RATE_16(a_t, l_t, 9, 7);
+                                    uint16_t k_t_release2 = TIMER_RATE_16(a_t, l_t, 9, 8);
 
-                            keycode_event_action(KC_BSPC, bs_t_pressed, bs_t_release);
-                            keycode_event_action(KC_K, k_t_pressed, k_t_release);
-                            action_exec(action_event);
-                            return true;
+                                    keycode_event_action(KC_BSPC, bs_t_pressed1, bs_t_release1);
+                                    keycode_event_action(KC_BSPC, bs_t_pressed2, bs_t_release2);
+                                    keycode_event_action(KC_K, k_t_pressed1, k_t_release1);
+                                    keycode_event_action(KC_K, k_t_pressed2, k_t_release2);
+                                    action_exec(action_event);
+                                    return true;
+                                }
+
+                                default: // ex) ca > ka
+                                {
+                                    uint16_t bs_t_pressed = TIMER_RATE_16(a_t, l_t, 5, 1);
+                                    uint16_t bs_t_release = TIMER_RATE_16(a_t, l_t, 5, 2);
+                                    uint16_t k_t_pressed = TIMER_RATE_16(a_t, l_t, 5, 3);
+                                    uint16_t k_t_release = TIMER_RATE_16(a_t, l_t, 5, 4);
+
+                                    keycode_event_action(KC_BSPC, bs_t_pressed, bs_t_release);
+                                    keycode_event_action(KC_K, k_t_pressed, k_t_release);
+                                    action_exec(action_event);
+                                    return true;
+                                }
+                            }
                         }
 
                         case KC_L: {
@@ -437,6 +462,25 @@ bool is_convert_action_event(keyevent_t action_event, bool is_ime_on, keyevent_t
                                             return false;
                                     }
                                 }
+                                case KC_L: // ex) lla > zza
+                                {
+                                    uint16_t bs_t_pressed1 = TIMER_RATE_16(a_t, l_t, 9, 1);
+                                    uint16_t bs_t_release1 = TIMER_RATE_16(a_t, l_t, 9, 2);
+                                    uint16_t bs_t_pressed2 = TIMER_RATE_16(a_t, l_t, 9, 3);
+                                    uint16_t bs_t_release2 = TIMER_RATE_16(a_t, l_t, 9, 4);
+                                    uint16_t z_t_pressed1 = TIMER_RATE_16(a_t, l_t, 9, 5);
+                                    uint16_t z_t_release1 = TIMER_RATE_16(a_t, l_t, 9, 6);
+                                    uint16_t z_t_pressed2 = TIMER_RATE_16(a_t, l_t, 9, 7);
+                                    uint16_t z_t_release2 = TIMER_RATE_16(a_t, l_t, 9, 8);
+
+                                    keycode_event_action(KC_BSPC, bs_t_pressed1, bs_t_release1);
+                                    keycode_event_action(KC_BSPC, bs_t_pressed2, bs_t_release2);
+                                    keycode_event_action(KC_Z, z_t_pressed1, z_t_release1);
+                                    keycode_event_action(KC_Z, z_t_pressed2, z_t_release2);
+                                    action_exec(action_event);
+                                    return true;
+                                }
+
                                 default: // ex) la > za
                                 {
                                     uint16_t bs_t_pressed = TIMER_RATE_16(a_t, l_t, 5, 1);
