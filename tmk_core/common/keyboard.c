@@ -16,6 +16,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include <stdint.h>
+#include <string.h>
 #include "keyboard.h"
 #include "matrix.h"
 #include "keymap.h"
@@ -262,7 +263,97 @@ void que_clear(uint8_t *que_head, uint8_t *que_num) {
     *que_num = 0;
 }
 
+uint16_t ktk(keypos_t key) {
+    return keymap_key_to_keycode(layer_switch_get_layer(key), key);
+}
+
 void que_print(data_t que_data[QUE_SIZE], char *str, uint8_t *que_head, uint8_t *que_num) {
+    static char keycode_val_to_name[][16] = {
+            "KC_NO",
+            "KC_ROLL_OVER",
+            "KC_POST_FAIL",
+            "KC_UNDEFINED",
+            "KC_A",
+            "KC_B",
+            "KC_C",
+            "KC_D",
+            "KC_E",
+            "KC_F",
+            "KC_G",
+            "KC_H",
+            "KC_I",
+            "KC_J",
+            "KC_K",
+            "KC_L",
+            "KC_M",
+            "KC_N",
+            "KC_O",
+            "KC_P",
+            "KC_Q",
+            "KC_R",
+            "KC_S",
+            "KC_T",
+            "KC_U",
+            "KC_V",
+            "KC_W",
+            "KC_X",
+            "KC_Y",
+            "KC_Z",
+            "KC_1",
+            "KC_2",
+            "KC_3",
+            "KC_4",
+            "KC_5",
+            "KC_6",
+            "KC_7",
+            "KC_8",
+            "KC_9",
+            "KC_0",
+            "KC_ENTER",
+            "KC_ESCAPE",
+            "KC_BSPACE",
+            "KC_TAB",
+            "KC_SPACE",
+            "KC_MINUS",
+            "KC_EQUAL",
+            "KC_LBRACKET",
+            "KC_RBRACKET",
+            "KC_BSLASH",
+            "KC_NONUS_HASH",
+            "KC_SCOLON",
+            "KC_QUOTE",
+            "KC_GRAVE",
+            "KC_COMMA",
+            "KC_DOT",
+            "KC_SLASH",
+            "KC_CAPSLOCK",
+            "KC_F1",
+            "KC_F2",
+            "KC_F3",
+            "KC_F4",
+            "KC_F5",
+            "KC_F6",
+            "KC_F7",
+            "KC_F8",
+            "KC_F9",
+            "KC_F10",
+            "KC_F11",
+            "KC_F12",
+            "KC_PSCREEN",
+            "KC_SCROLLLOCK",
+            "KC_PAUSE",
+            "KC_INSERT",
+            "KC_HOME",
+            "KC_PGUP",
+            "KC_DELETE",
+            "KC_END",
+            "KC_PGDOWN",
+            "KC_RIGHT",
+            "KC_LEFT",
+            "KC_DOWN",
+            "KC_UP",
+            "KC_NUMLOCK",
+    };
     udprintf("=== que_print === %32s\n", str);
     udprintf("*que_head: %d\t", *que_head);
     udprintf("*que_num: %d\n", *que_num);
@@ -273,14 +364,18 @@ void que_print(data_t que_data[QUE_SIZE], char *str, uint8_t *que_head, uint8_t 
 //    }
     for (uint8_t i = 0; i < QUE_SIZE; i++) {
         if (i != 0) udprint(",");
-        udprintf(" %u", que_data[i].time);
+        char keycode_name[17];
+        uint8_t current_keycode = ktk(que_data[i].key);
+        if(current_keycode <= 83){
+            strcpy(keycode_name,keycode_val_to_name[current_keycode]);
+        }
+        else{
+            strcpy(keycode_name,"____");
+        }
+        udprintf(" %s", keycode_name);
     }
     udprint("]\n");
     udprintln("================");
-}
-
-uint16_t ktk(keypos_t key) {
-    return keymap_key_to_keycode(layer_switch_get_layer(key), key);
 }
 
 #define atk(keycode)    alphabet_to_keypos[keycode - 0x04]
