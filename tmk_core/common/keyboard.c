@@ -390,23 +390,23 @@ bool is_convert_action_event(keyevent_t action_event, bool is_ime_on, keyevent_t
                             switch (ktk(last2_event.key)) {
                                 case KC_C: // ex) cca > kka
                                 {
-                                    uint8_t keycode_series[]= {
+                                    uint8_t keycode_series[] = {
                                             KC_BSPC,
                                             KC_BSPC,
                                             KC_K,
                                             KC_K,
                                     };
-                                    action_exec_by_series_keycode(keycode_series,4,l_t,a_t);
+                                    action_exec_by_series_keycode(keycode_series, 4, l_t, a_t);
                                     action_exec(action_event);
                                     return true;
                                 }
                                 default: // ex) ca > ka
                                 {
-                                    uint8_t keycode_series[]= {
+                                    uint8_t keycode_series[] = {
                                             KC_BSPC,
                                             KC_K,
                                     };
-                                    action_exec_by_series_keycode(keycode_series,2,l_t,a_t);
+                                    action_exec_by_series_keycode(keycode_series, 2, l_t, a_t);
                                     action_exec(action_event);
                                     return true;
                                 }
@@ -419,23 +419,23 @@ bool is_convert_action_event(keyevent_t action_event, bool is_ime_on, keyevent_t
                                     switch (current_keycode) {
                                         case KC_I: // tli > texi
                                         {
-                                            uint8_t keycode_series[]= {
+                                            uint8_t keycode_series[] = {
                                                     KC_BSPC,
                                                     KC_E,
                                                     KC_X
                                             };
-                                            action_exec_by_series_keycode(keycode_series,3,l_t,a_t);
+                                            action_exec_by_series_keycode(keycode_series, 3, l_t, a_t);
                                             action_exec(action_event);
                                             return true;
                                         }
                                         case KC_U: // tlu > toxu
                                         {
-                                            uint8_t keycode_series[]= {
+                                            uint8_t keycode_series[] = {
                                                     KC_BSPC,
                                                     KC_O,
                                                     KC_X
                                             };
-                                            action_exec_by_series_keycode(keycode_series,3,l_t,a_t);
+                                            action_exec_by_series_keycode(keycode_series, 3, l_t, a_t);
                                             action_exec(action_event);
                                             return true;
                                         }
@@ -446,12 +446,12 @@ bool is_convert_action_event(keyevent_t action_event, bool is_ime_on, keyevent_t
                                 case KC_D: {
                                     switch (current_keycode) {
                                         case KC_I: { // dli > dexi
-                                            uint8_t keycode_series[]= {
+                                            uint8_t keycode_series[] = {
                                                     KC_BSPC,
                                                     KC_E,
                                                     KC_X
                                             };
-                                            action_exec_by_series_keycode(keycode_series,3,l_t,a_t);
+                                            action_exec_by_series_keycode(keycode_series, 3, l_t, a_t);
                                             action_exec(action_event);
                                             return true;
                                         }
@@ -461,24 +461,24 @@ bool is_convert_action_event(keyevent_t action_event, bool is_ime_on, keyevent_t
                                 }
                                 case KC_L: // ex) lla > zza
                                 {
-                                    uint8_t keycode_series[]= {
+                                    uint8_t keycode_series[] = {
                                             KC_BSPC,
                                             KC_BSPC,
                                             KC_Z,
                                             KC_Z,
                                     };
-                                    action_exec_by_series_keycode(keycode_series,4,l_t,a_t);
+                                    action_exec_by_series_keycode(keycode_series, 4, l_t, a_t);
                                     action_exec(action_event);
                                     return true;
                                 }
 
                                 default: // ex) la > za
                                 {
-                                    uint8_t keycode_series[]= {
+                                    uint8_t keycode_series[] = {
                                             KC_BSPC,
                                             KC_Z
                                     };
-                                    action_exec_by_series_keycode(keycode_series,2,l_t,a_t);
+                                    action_exec_by_series_keycode(keycode_series, 2, l_t, a_t);
                                     action_exec(action_event);
                                     return true;
                                 }
@@ -496,7 +496,7 @@ bool is_convert_action_event(keyevent_t action_event, bool is_ime_on, keyevent_t
                             switch (ktk(last2_event.key)) {
                                 case KC_C: // ex) ccz > kkya
                                 {
-                                    uint8_t keycode_series[]= {
+                                    uint8_t keycode_series[] = {
                                             KC_BSPC,
                                             KC_BSPC,
                                             KC_K,
@@ -504,18 +504,18 @@ bool is_convert_action_event(keyevent_t action_event, bool is_ime_on, keyevent_t
                                             KC_Y,
                                             KC_A
                                     };
-                                    action_exec_by_series_keycode(keycode_series,6,l_t,a_t);
+                                    action_exec_by_series_keycode(keycode_series, 6, l_t, a_t);
                                     return true;
                                 }
                                 default: // ex) cz > kya
                                 {
-                                    uint8_t keycode_series[]= {
+                                    uint8_t keycode_series[] = {
                                             KC_BSPC,
                                             KC_K,
                                             KC_Y,
                                             KC_A
                                     };
-                                    action_exec_by_series_keycode(keycode_series,4,l_t,a_t);
+                                    action_exec_by_series_keycode(keycode_series, 4, l_t, a_t);
                                     return true;
                                 }
                             }
@@ -525,7 +525,7 @@ bool is_convert_action_event(keyevent_t action_event, bool is_ime_on, keyevent_t
                             switch (ktk(last2_event.key)) {
                                 case KC_L: // ex) llz > zzya
                                 {
-                                    uint8_t keycode_series[]= {
+                                    uint8_t keycode_series[] = {
                                             KC_BSPC,
                                             KC_BSPC,
                                             KC_Z,
@@ -533,28 +533,28 @@ bool is_convert_action_event(keyevent_t action_event, bool is_ime_on, keyevent_t
                                             KC_Y,
                                             KC_A
                                     };
-                                    action_exec_by_series_keycode(keycode_series,6,l_t,a_t);
+                                    action_exec_by_series_keycode(keycode_series, 6, l_t, a_t);
                                     return true;
                                 }
                                 default: // ex) lz > zya
                                 {
-                                    uint8_t keycode_series[]= {
+                                    uint8_t keycode_series[] = {
                                             KC_BSPC,
                                             KC_Z,
                                             KC_Y,
                                             KC_A
                                     };
-                                    action_exec_by_series_keycode(keycode_series,2,l_t,a_t);
+                                    action_exec_by_series_keycode(keycode_series, 2, l_t, a_t);
                                     return true;
                                 }
                             }
                         }
-                        default:{
-                            uint8_t keycode_series[]= {
+                        default: {
+                            uint8_t keycode_series[] = {
                                     KC_Y,
                                     KC_A
                             };
-                            action_exec_by_series_keycode(keycode_series,2,l_t,a_t);
+                            action_exec_by_series_keycode(keycode_series, 2, l_t, a_t);
                             return true;
                         }
                     }
@@ -568,7 +568,7 @@ bool is_convert_action_event(keyevent_t action_event, bool is_ime_on, keyevent_t
                             switch (ktk(last2_event.key)) {
                                 case KC_C: // ex) cck > kkyu
                                 {
-                                    uint8_t keycode_series[]= {
+                                    uint8_t keycode_series[] = {
                                             KC_BSPC,
                                             KC_BSPC,
                                             KC_K,
@@ -576,18 +576,18 @@ bool is_convert_action_event(keyevent_t action_event, bool is_ime_on, keyevent_t
                                             KC_Y,
                                             KC_U
                                     };
-                                    action_exec_by_series_keycode(keycode_series,6,l_t,a_t);
+                                    action_exec_by_series_keycode(keycode_series, 6, l_t, a_t);
                                     return true;
                                 }
                                 default: // ex) ck > kyu
                                 {
-                                    uint8_t keycode_series[]= {
+                                    uint8_t keycode_series[] = {
                                             KC_BSPC,
                                             KC_K,
                                             KC_Y,
                                             KC_U
                                     };
-                                    action_exec_by_series_keycode(keycode_series,4,l_t,a_t);
+                                    action_exec_by_series_keycode(keycode_series, 4, l_t, a_t);
                                     return true;
                                 }
                             }
@@ -597,7 +597,7 @@ bool is_convert_action_event(keyevent_t action_event, bool is_ime_on, keyevent_t
                             switch (ktk(last2_event.key)) {
                                 case KC_L: // ex) llk > zzyu
                                 {
-                                    uint8_t keycode_series[]= {
+                                    uint8_t keycode_series[] = {
                                             KC_BSPC,
                                             KC_BSPC,
                                             KC_Z,
@@ -605,28 +605,28 @@ bool is_convert_action_event(keyevent_t action_event, bool is_ime_on, keyevent_t
                                             KC_Y,
                                             KC_U
                                     };
-                                    action_exec_by_series_keycode(keycode_series,6,l_t,a_t);
+                                    action_exec_by_series_keycode(keycode_series, 6, l_t, a_t);
                                     return true;
                                 }
                                 default: // ex) lk > zyu
                                 {
-                                    uint8_t keycode_series[]= {
+                                    uint8_t keycode_series[] = {
                                             KC_BSPC,
                                             KC_Z,
                                             KC_Y,
                                             KC_U
                                     };
-                                    action_exec_by_series_keycode(keycode_series,2,l_t,a_t);
+                                    action_exec_by_series_keycode(keycode_series, 2, l_t, a_t);
                                     return true;
                                 }
                             }
                         }
-                        default:{
-                            uint8_t keycode_series[]= {
+                        default: {
+                            uint8_t keycode_series[] = {
                                     KC_Y,
                                     KC_U
                             };
-                            action_exec_by_series_keycode(keycode_series,2,l_t,a_t);
+                            action_exec_by_series_keycode(keycode_series, 2, l_t, a_t);
                             return true;
                         }
                     }
@@ -640,7 +640,7 @@ bool is_convert_action_event(keyevent_t action_event, bool is_ime_on, keyevent_t
                             switch (ktk(last2_event.key)) {
                                 case KC_C: // ex) ccq > kkyo
                                 {
-                                    uint8_t keycode_series[]= {
+                                    uint8_t keycode_series[] = {
                                             KC_BSPC,
                                             KC_BSPC,
                                             KC_K,
@@ -648,18 +648,18 @@ bool is_convert_action_event(keyevent_t action_event, bool is_ime_on, keyevent_t
                                             KC_Y,
                                             KC_O
                                     };
-                                    action_exec_by_series_keycode(keycode_series,6,l_t,a_t);
+                                    action_exec_by_series_keycode(keycode_series, 6, l_t, a_t);
                                     return true;
                                 }
                                 default: // ex) cq > kyo
                                 {
-                                    uint8_t keycode_series[]= {
+                                    uint8_t keycode_series[] = {
                                             KC_BSPC,
                                             KC_K,
                                             KC_Y,
                                             KC_O
                                     };
-                                    action_exec_by_series_keycode(keycode_series,4,l_t,a_t);
+                                    action_exec_by_series_keycode(keycode_series, 4, l_t, a_t);
                                     return true;
                                 }
                             }
@@ -669,7 +669,7 @@ bool is_convert_action_event(keyevent_t action_event, bool is_ime_on, keyevent_t
                             switch (ktk(last2_event.key)) {
                                 case KC_L: // ex) llq > zzyo
                                 {
-                                    uint8_t keycode_series[]= {
+                                    uint8_t keycode_series[] = {
                                             KC_BSPC,
                                             KC_BSPC,
                                             KC_Z,
@@ -677,28 +677,28 @@ bool is_convert_action_event(keyevent_t action_event, bool is_ime_on, keyevent_t
                                             KC_Y,
                                             KC_O
                                     };
-                                    action_exec_by_series_keycode(keycode_series,6,l_t,a_t);
+                                    action_exec_by_series_keycode(keycode_series, 6, l_t, a_t);
                                     return true;
                                 }
                                 default: // ex) lq > zyo
                                 {
-                                    uint8_t keycode_series[]= {
+                                    uint8_t keycode_series[] = {
                                             KC_BSPC,
                                             KC_Z,
                                             KC_Y,
                                             KC_O
                                     };
-                                    action_exec_by_series_keycode(keycode_series,2,l_t,a_t);
+                                    action_exec_by_series_keycode(keycode_series, 2, l_t, a_t);
                                     return true;
                                 }
                             }
                         }
-                        default:{
-                            uint8_t keycode_series[]= {
+                        default: {
+                            uint8_t keycode_series[] = {
                                     KC_Y,
                                     KC_O
                             };
-                            action_exec_by_series_keycode(keycode_series,2,l_t,a_t);
+                            action_exec_by_series_keycode(keycode_series, 2, l_t, a_t);
                             return true;
                         }
                     }
@@ -711,6 +711,25 @@ bool is_convert_action_event(keyevent_t action_event, bool is_ime_on, keyevent_t
         }
     }
     return false;
+}
+
+void unenque_zenkaku(data_t que_data[QUE_SIZE], uint8_t *que_head, uint8_t *que_num) {
+    if (*que_num > 0) {
+        keyevent_t last_event = read_que_from_last(que_data, que_head, que_num, 0);
+        switch (ktk(last_event.key)) {
+            case KC_A:
+            case KC_I:
+            case KC_U:
+            case KC_E:
+            case KC_O:
+            case KC_Z:
+            case KC_K:
+            case KC_X:
+                que_clear(que_head, que_num);
+            default:
+                unenque(que_data, que_head, que_num);
+        }
+    }
 }
 
 bool is_ime_on = false;
@@ -832,6 +851,10 @@ void keyboard_task(void) {
                         break;
 
                     case KC_BSPC:
+                        if (is_ime_on) {
+                            unenque_zenkaku(hist_que, &hist_que_head, &hist_que_num);
+                            break;
+                        }
                         unenque(hist_que, &hist_que_head, &hist_que_num);
                         break;
 
