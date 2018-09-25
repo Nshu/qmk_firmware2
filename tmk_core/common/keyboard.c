@@ -268,7 +268,7 @@ uint16_t ktk(keypos_t key) {
 }
 
 void keycode_val_to_name(uint8_t keycode, char *keycode_name){
-    static char keycode_val_to_name[][16] = {
+    static const char keycode_val_to_name[][16] = {
             "KC_NO",
             "KC_ROLL_OVER",
             "KC_POST_FAIL",
