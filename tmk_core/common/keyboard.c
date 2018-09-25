@@ -267,7 +267,7 @@ uint16_t ktk(keypos_t key) {
     return keymap_key_to_keycode(layer_switch_get_layer(key), key);
 }
 
-void que_print(data_t que_data[QUE_SIZE], char *str, uint8_t *que_head, uint8_t *que_num) {
+void keycode_val_to_name(uint8_t keycode, char *keycode_name){
     static char keycode_val_to_name[][16] = {
             "KC_NO",
             "KC_ROLL_OVER",
@@ -354,6 +354,15 @@ void que_print(data_t que_data[QUE_SIZE], char *str, uint8_t *que_head, uint8_t 
             "KC_UP",
             "KC_NUMLOCK",
     };
+    if(keycode <= 83){
+        strcpy(keycode_name,keycode_val_to_name[keycode]);
+    }
+    else{
+        strcpy(keycode_name,"____");
+    }
+}
+
+void que_print(data_t que_data[QUE_SIZE], char *str, uint8_t *que_head, uint8_t *que_num) {
     udprintf("=== que_print === %32s\n", str);
     udprintf("*que_head: %d\t", *que_head);
     udprintf("*que_num: %d\n", *que_num);
@@ -366,12 +375,7 @@ void que_print(data_t que_data[QUE_SIZE], char *str, uint8_t *que_head, uint8_t 
         if (i != 0) udprint(",");
         char keycode_name[17];
         uint8_t current_keycode = ktk(que_data[i].key);
-        if(current_keycode <= 83){
-            strcpy(keycode_name,keycode_val_to_name[current_keycode]);
-        }
-        else{
-            strcpy(keycode_name,"____");
-        }
+        keycode_val_to_name(current_keycode,keycode_name);
         udprintf(" %s", keycode_name);
     }
     udprint("]\n");
