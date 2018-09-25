@@ -366,7 +366,7 @@ void que_print(data_t que_data[QUE_SIZE], char *str, uint8_t *que_head, uint8_t 
     udprintf("=== que_print === %32s\n", str);
     udprintf("*que_head: %d\t", *que_head);
     udprintf("*que_num: %d\n", *que_num);
-    udprint("que:[");
+    udprint("real_que:[");
 //    for(uint8_t i=*que_head; i < *que_head + QUE_SIZE; i++){
 //        if(i != *que_head) udprint(",");
 //        udprintf(" %d",que_data[i % QUE_SIZE].time);
@@ -379,6 +379,17 @@ void que_print(data_t que_data[QUE_SIZE], char *str, uint8_t *que_head, uint8_t 
         udprintf(" %s", keycode_name);
     }
     udprint("]\n");
+
+    udprint("virtual_que:[");
+    for(uint8_t i = *que_head; i < *que_num; i++){
+        if (i != 0) udprint(",");
+        char keycode_name[17];
+        uint8_t current_keycode = ktk(que_data[i].key);
+        keycode_val_to_name(current_keycode,keycode_name);
+        udprintf(" %s", keycode_name);
+    }
+    udprint("]\n");
+    
     udprintln("================");
 }
 
