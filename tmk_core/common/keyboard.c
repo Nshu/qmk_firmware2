@@ -252,6 +252,7 @@ data_t read_que_from_last(data_t que_data[QUE_SIZE], uint8_t *que_head, uint8_t 
     if (*que_num > 0) {
         uint8_t virtual_que_last_index = *que_head + *que_num - 1;
         uint8_t virtual_que_index = virtual_que_last_index - from_last;
+        if(virtual_que_index < 0) return TICK;
         uint8_t real_que_index = virtual_que_index % QUE_SIZE;
         return que_data[real_que_index];
     } else {
