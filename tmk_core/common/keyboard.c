@@ -205,6 +205,12 @@ void keyboard_init(void) {
 #define QUE_SIZE 8
 typedef keyevent_t data_t;
 
+void swap_element_in_array(data_t *array, uint8_t index1, uint8_t index2){
+    data_t tmp = array[index1];
+    array[index1] = array[index2];
+    array[index2] = tmp;
+}
+
 bool enque(data_t que_data[QUE_SIZE], data_t enq_data, uint8_t *que_head, uint8_t *que_num) {
     if (*que_num < QUE_SIZE) {
         que_data[(*que_head + *que_num) % QUE_SIZE] = enq_data;
