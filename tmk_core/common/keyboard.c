@@ -389,7 +389,7 @@ void que_print(data_t que_data[QUE_SIZE], char *str, uint8_t *que_head, uint8_t 
         udprintf(" %s", keycode_name);
     }
     udprint("]\n");
-    
+
     udprintln("================");
 }
 
@@ -481,7 +481,7 @@ bool is_convert_action_event(keyevent_t action_event, bool is_ime_on, keyevent_t
     if (is_ime_on) {
         if (action_event.pressed) {
             uint8_t current_keycode = ktk(action_event.key);
-            udprintv(current_keycode, %u);
+            udprintvln(current_keycode, %u);
 
             keyevent_t last_event = read_que_from_last(hist_que, hist_que_head, hist_que_num, 0);
 
