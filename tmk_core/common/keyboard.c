@@ -454,6 +454,7 @@ void action_exec_by_keycode(uint8_t keycode, uint16_t pressed_time, uint16_t rel
 
 void action_exec_by_series_keycode(uint8_t *keycode, uint8_t num_of_keycode, uint16_t last_event_time,
                                    uint16_t current_event_time) {
+    udprintln("=== enter action_exec_by_series_keycode ===");
     uint16_t pressed_times[num_of_keycode];
     uint16_t release_times[num_of_keycode];
 
@@ -468,9 +469,14 @@ void action_exec_by_series_keycode(uint8_t *keycode, uint8_t num_of_keycode, uin
         }
     }
 
+    udprintvln(num_of_keycode,%u);
     for (uint8_t i = 0; i < num_of_keycode; i++) {
+        udprintvln(keycode[i],%u);
+        udprintvln(pressed_times[i],%u);
+        udprintvln(release_times[i],%u);
         action_exec_by_keycode(keycode[i], pressed_times[i], release_times[i]);
     }
+    udprintln("=== exit action_exec_by_series_keycode ===");
 }
 
 // converted > return true

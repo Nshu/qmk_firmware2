@@ -215,7 +215,9 @@ bool process_record_quantum(keyrecord_t *record) {
     keycode = keymap_key_to_keycode(layer_switch_get_layer(key), key);
     char keycode_name[17];
     keycode_val_to_name(keycode, keycode_name);
-    udprintvln(keycode_name,%s);
+    udprintv(keycode_name,%s);
+    udprint("\t");
+    udprintvln(record->event.pressed,%d);
 
 //    udprintv(layer_switch_get_layer(key),%d);
 
