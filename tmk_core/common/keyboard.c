@@ -364,24 +364,24 @@ void keycode_val_to_name(uint8_t keycode, char *keycode_name){
 
 void que_print(data_t que_data[QUE_SIZE], char *str, uint8_t *que_head, uint8_t *que_num) {
     udprintf("=== que_print === %32s\n", str);
-    udprintf("*que_head: %d\t", *que_head);
-    udprintf("*que_num: %d\n", *que_num);
+//    udprintf("*que_head: %d\t", *que_head);
+//    udprintf("*que_num: %d\n", *que_num);
 
-    udprint("real_que keycode:[");
-    for (uint8_t i = 0; i < QUE_SIZE; i++) {
-        if (i != 0) udprint(",");
-        char keycode_name[17];
-        uint8_t current_keycode = ktk(que_data[i].key);
-        keycode_val_to_name(current_keycode,keycode_name);
-        udprintf(" %s", keycode_name);
-    }
-    udprint("]\n");
-    udprint("real_que time:[");
-    for (uint8_t i = 0; i < QUE_SIZE; i++) {
-        if (i != 0) udprint(",");
-        udprintf(" %u", que_data[i].time);
-    }
-    udprint("]\n");
+//    udprint("real_que keycode:[");
+//    for (uint8_t i = 0; i < QUE_SIZE; i++) {
+//        if (i != 0) udprint(",");
+//        char keycode_name[17];
+//        uint8_t current_keycode = ktk(que_data[i].key);
+//        keycode_val_to_name(current_keycode,keycode_name);
+//        udprintf(" %s", keycode_name);
+//    }
+//    udprint("]\n");
+//    udprint("real_que time:[");
+//    for (uint8_t i = 0; i < QUE_SIZE; i++) {
+//        if (i != 0) udprint(",");
+//        udprintf(" %u", que_data[i].time);
+//    }
+//    udprint("]\n");
 
     udprint("virtual_que keycode:[");
     for(uint8_t i = *que_head; i < *que_head + *que_num; i++){
@@ -918,8 +918,8 @@ void keyboard_task(void) {
                                 .time = (timer_read() | 1) /* time should not be 0 */
                         };
                         enque(event_que, current_event, &event_que_head, &event_que_num) ? udprintf(
-                                "enque ok. t: %u\n",
-                                (timer_read() | 1))
+                                "\nenque ok. t: %u, pressed: %d\n",
+                                (timer_read() | 1),current_event.pressed)
                                                                                          : udprintln(
                                 "enque ng");
                         que_print(event_que, "event_que after enque", &event_que_head, &event_que_num);
@@ -951,7 +951,7 @@ void keyboard_task(void) {
 //            udprintf("current_que_head.key.col: %u\n",current_que_head.key.col);
 //    prev_que_head_key_col = current_que_head.key.col;
     if (current_que_head.key.col != TICK.key.col){ //deque_event != TICK
-        if (TIMER_DIFF_16((timer_read() | 1), current_que_head.time) > 10) {
+        if (TIMER_DIFF_16((timer_read() | 1), current_que_head.time) > 20) {
 //            que_print(event_que,"after 10msec check.",&event_que_head,&event_que_num);
 //            udprintf("current_que_head.time: %u\n", current_que_head.time);
 //            udprintf("current time.   : %u\n", (timer_read() | 1));
