@@ -201,6 +201,7 @@ void keyboard_init(void) {
  * This is repeatedly called as fast as possible.
  */
 
+#define EVENT_QUE_HOLD_TIME 20
 #define QUE_SIZE 8
 typedef keyevent_t data_t;
 
@@ -951,7 +952,7 @@ void keyboard_task(void) {
 //            udprintf("current_que_head.key.col: %u\n",current_que_head.key.col);
 //    prev_que_head_key_col = current_que_head.key.col;
     if (current_que_head.key.col != TICK.key.col){ //deque_event != TICK
-        if (TIMER_DIFF_16((timer_read() | 1), current_que_head.time) > 20) {
+        if (TIMER_DIFF_16((timer_read() | 1), current_que_head.time) > EVENT_QUE_HOLD_TIME) {
 //            que_print(event_que,"after 10msec check.",&event_que_head,&event_que_num);
 //            udprintf("current_que_head.time: %u\n", current_que_head.time);
 //            udprintf("current time.   : %u\n", (timer_read() | 1));
