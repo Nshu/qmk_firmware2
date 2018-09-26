@@ -366,11 +366,8 @@ void que_print(data_t que_data[QUE_SIZE], char *str, uint8_t *que_head, uint8_t 
     udprintf("=== que_print === %32s\n", str);
     udprintf("*que_head: %d\t", *que_head);
     udprintf("*que_num: %d\n", *que_num);
-    udprint("real_que:[");
-//    for(uint8_t i=*que_head; i < *que_head + QUE_SIZE; i++){
-//        if(i != *que_head) udprint(",");
-//        udprintf(" %d",que_data[i % QUE_SIZE].time);
-//    }
+
+    udprint("real_que keycode:[");
     for (uint8_t i = 0; i < QUE_SIZE; i++) {
         if (i != 0) udprint(",");
         char keycode_name[17];
@@ -379,14 +376,26 @@ void que_print(data_t que_data[QUE_SIZE], char *str, uint8_t *que_head, uint8_t 
         udprintf(" %s", keycode_name);
     }
     udprint("]\n");
-
-    udprint("virtual_que:[");
-    for(uint8_t i = *que_head; i < *que_num; i++){
+    udprint("real_que time:[");
+    for (uint8_t i = 0; i < QUE_SIZE; i++) {
         if (i != 0) udprint(",");
+        udprintf(" %u", que_data[i].time);
+    }
+    udprint("]\n");
+
+    udprint("virtual_que keycode:[");
+    for(uint8_t i = *que_head; i < *que_head + *que_num; i++){
+        if (i != *que_head) udprint(",");
         char keycode_name[17];
-        uint8_t current_keycode = ktk(que_data[i].key);
+        uint8_t current_keycode = ktk(que_data[i % QUE_SIZE].key);
         keycode_val_to_name(current_keycode,keycode_name);
         udprintf(" %s", keycode_name);
+    }
+    udprint("]\n");
+    udprint("virtual_que time:[");
+    for(uint8_t i = *que_head; i < *que_head + *que_num; i++){
+        if (i != *que_head) udprint(",");
+        udprintf(" %u", que_data[i % QUE_SIZE].time);
     }
     udprint("]\n");
 
@@ -913,7 +922,7 @@ void keyboard_task(void) {
                                 (timer_read() | 1))
                                                                                          : udprintln(
                                 "enque ng");
-//                        que_print(event_que, "after enque", &event_que_head, &event_que_num);
+                        que_print(event_que, "event_que after enque", &event_que_head, &event_que_num);
 
                         // record a processed key
                         matrix_prev[r] ^= ((matrix_row_t) 1 << c);
@@ -950,12 +959,12 @@ void keyboard_task(void) {
             keyevent_t action_event = deque(event_que, &event_que_head, &event_que_num);
 
             //convert action_event
-            udprint("\n=== enter is_convert_action_event ===\n");
+//            udprint("\n=== enter is_convert_action_event ===\n");
             if (!is_convert_action_event(action_event, is_ime_on, hist_que, &hist_que_head, &hist_que_num)) {
-                que_print(hist_que, "after convert", &hist_que_head, &hist_que_num);
+//                que_print(hist_que, "hist_que after convert", &hist_que_head, &hist_que_num);
                 action_exec(action_event);
             }
-            udprint("=====================================\n\n");
+//            udprint("=====================================\n\n");
 
             if (action_event.pressed) {
                 switch (ktk(action_event.key)) {
