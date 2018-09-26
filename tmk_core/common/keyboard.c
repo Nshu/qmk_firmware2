@@ -266,6 +266,12 @@ data_t read_que_from_last(data_t que_data[QUE_SIZE], uint8_t *que_head, uint8_t 
     }
 }
 
+void copy_que_as_array(data_t que_data[QUE_SIZE], uint8_t *que_head, uint8_t *que_num, data_t return_array[QUE_SIZE]){
+    for(uint8_t i=0, i_ary; i<QUE_SIZE; i++,i_ary++){
+        return_array[i_ary] = read_que_from_last(que_data,*que_head,*que_num,0);
+    }
+}
+
 void que_clear(uint8_t *que_head, uint8_t *que_num) {
     *que_head = 0;
     *que_num = 0;
