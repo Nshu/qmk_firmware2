@@ -945,21 +945,11 @@ void keyboard_task(void) {
 #endif
 //    MATRIX_LOOP_END:
 
-
     keyevent_t current_que_head = read_que_head(event_que, &event_que_head, &event_que_num);
-//    static uint8_t prev_que_head_key_col = 0;
-//    if(current_que_head.key.col != prev_que_head_key_col)
-//            udprintf("current_que_head.key.col: %u\n",current_que_head.key.col);
-//    prev_que_head_key_col = current_que_head.key.col;
     if (current_que_head.key.col != TICK.key.col){ //deque_event != TICK
         if (TIMER_DIFF_16((timer_read() | 1), current_que_head.time) > EVENT_QUE_HOLD_TIME) {
-//            que_print(event_que,"after 10msec check.",&event_que_head,&event_que_num);
-//            udprintf("current_que_head.time: %u\n", current_que_head.time);
-//            udprintf("current time.   : %u\n", (timer_read() | 1));
-
             keyevent_t action_event = deque(event_que, &event_que_head, &event_que_num);
 
-            //convert action_event
 //            udprint("\n=== enter is_convert_action_event ===\n");
             if (!is_convert_action_event(action_event, is_ime_on, hist_que, &hist_que_head, &hist_que_num)) {
 //                que_print(hist_que, "hist_que after convert", &hist_que_head, &hist_que_num);
@@ -975,7 +965,6 @@ void keyboard_task(void) {
                             enque(hist_que, action_event, &hist_que_head, &hist_que_num);
                         }
                         break;
-
                     case KC_BSPC:
                         if (is_ime_on) {
                             unenque_zenkaku(hist_que, &hist_que_head, &hist_que_num);
@@ -983,14 +972,12 @@ void keyboard_task(void) {
                         }
                         unenque(hist_que, &hist_que_head, &hist_que_num);
                         break;
-
                     case KC_CAPSLOCK:
                     case JP_KANA:
                     case JP_HENK:
                         is_ime_on = true;
                         que_clear(&hist_que_head, &hist_que_num);
                         break;
-
                     default:
                         que_clear(&hist_que_head, &hist_que_num);
                         break;
