@@ -205,12 +205,6 @@ void keyboard_init(void) {
 #define QUE_SIZE 8
 typedef keyevent_t data_t;
 
-void swap_element_in_array(data_t *array, uint8_t index1, uint8_t index2){
-    data_t tmp = array[index1];
-    array[index1] = array[index2];
-    array[index2] = tmp;
-}
-
 bool enque(data_t que_data[QUE_SIZE], data_t enq_data, uint8_t *que_head, uint8_t *que_num) {
     if (*que_num < QUE_SIZE) {
         que_data[(*que_head + *que_num) % QUE_SIZE] = enq_data;
@@ -263,12 +257,6 @@ data_t read_que_from_last(data_t que_data[QUE_SIZE], uint8_t *que_head, uint8_t 
         return que_data[real_que_index];
     } else {
         return TICK;
-    }
-}
-
-void copy_que_as_array(data_t que_data[QUE_SIZE], uint8_t *que_head, uint8_t *que_num, data_t return_array[QUE_SIZE]){
-    for(uint8_t i=0, i_ary; i<QUE_SIZE; i++,i_ary++){
-        return_array[i_ary] = read_que_from_last(que_data,*que_head,*que_num,0);
     }
 }
 
