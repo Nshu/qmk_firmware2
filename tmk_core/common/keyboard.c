@@ -401,9 +401,11 @@ void que_print(data_t que_data[QUE_SIZE], char *str, uint8_t *que_head, uint8_t 
     for(uint8_t i = *que_head; i < *que_head + *que_num; i++){
         if (i != *que_head) udprint(",");
         char keycode_name[17];
-        uint8_t current_keycode = ktk(que_data[i % QUE_SIZE].key);
+        uint32_t current_keycode32 = ktk(que_data[i % QUE_SIZE].key);
+        udprintf(" %u:",current_keycode32);
+        uint8_t current_keycode = (uint8_t)current_keycode32;
         keycode_val_to_name(current_keycode,keycode_name);
-        udprintf(" %s", keycode_name);
+        udprintf("%s", keycode_name);
     }
     udprint("]\n");
     udprint("virtual_que time:[");
