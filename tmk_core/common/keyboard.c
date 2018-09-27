@@ -882,6 +882,21 @@ bool is_in_prefix_key(int keycode){
     }
 }
 
+void resort_event_que(data_t event_que_data[QUE_SIZE], uint8_t *event_que_head, uint8_t *event_que_num){
+    if(*event_que_num <= 1) return;
+    uint8_t que_last_v_i = *event_que_num - 1; // >= 1
+    for(int v_i = que_last_v_i; v_i > 0; v_i--){
+        uint8_t r_i = (*event_que_head + v_i) % QUE_SIZE;
+        uint8_t r_i_1 = (*event_que_head + v_i - 1) % QUE_SIZE;
+        if(is_in_prefix_key(ktk(event_que_data[r_i].key)) && \
+            event_que_data[r_i].pressed){
+            // switch i and i-1
+            swap_element_in_array(event_que_data,r_i,r_i_1);
+            if(event_que_data[r_i_1].pressed) break;
+        }
+    }
+}
+
 bool is_ime_on = false;
 
 void keyboard_task(void) {
@@ -948,6 +963,8 @@ void keyboard_task(void) {
                                                                                          : udprintln(
                                 "enque ng");
                         que_print(event_que, "event_que after enque", &event_que_head, &event_que_num);
+
+                        resort_event_que(event_que,&event_que_head,&event_que_num);
 
                         // record a processed key
                         matrix_prev[r] ^= ((matrix_row_t) 1 << c);
