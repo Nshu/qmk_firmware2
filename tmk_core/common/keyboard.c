@@ -968,6 +968,8 @@ void keyboard_task(void) {
 
                         resort_event_que(event_que,&event_que_head,&event_que_num);
 
+                        que_print(event_que, "event_que after resort", &event_que_head, &event_que_num);
+
                         // record a processed key
                         matrix_prev[r] ^= ((matrix_row_t) 1 << c);
 #ifdef QMK_KEYS_PER_SCAN
