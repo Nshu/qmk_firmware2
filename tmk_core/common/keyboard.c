@@ -871,6 +871,17 @@ void unenque_zenkaku(data_t que_data[QUE_SIZE], uint8_t *que_head, uint8_t *que_
     }
 }
 
+bool is_in_prefix_key(int keycode){
+    switch(keycode){
+        case MO(0) ... MO(2):
+        case KC_LCTRL ... KC_RGUI:
+            return true;
+
+        default:
+            return false;
+    }
+}
+
 bool is_ime_on = false;
 
 void keyboard_task(void) {
