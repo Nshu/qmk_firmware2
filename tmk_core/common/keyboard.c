@@ -271,6 +271,12 @@ void que_clear(uint8_t *que_head, uint8_t *que_num) {
     *que_num = 0;
 }
 
+void swap_element_in_que(data_t que_data[QUE_SIZE], uint8_t v_index1, uint8_t v_index2){
+    uint8_t r_index1 = v_index1 % QUE_SIZE;
+    uint8_t r_index2 = v_index2 % QUE_SIZE;
+    swap_element_in_array(que_data,r_index1,r_index2);
+}
+
 uint16_t ktk(keypos_t key) {
     return keymap_key_to_keycode(layer_switch_get_layer(key), key);
 }
