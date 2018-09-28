@@ -210,9 +210,25 @@ uint16_t ktk(keypos_t key) {
 typedef keyevent_t data_t;
 
 void swap_element_in_array(data_t *array, uint8_t index1, uint8_t index2){
+//    udprint("array [");
+//    for(uint8_t i= 0; i<QUE_SIZE; i++){
+//        if(i != 0) udprint(",");
+//        udprintf("%u",ktk(array[i].key));
+//    }
+//    udprintln("] before");
+//    udprintvln(index1,%u);
+//    udprintvln(index2,%u);
+
     data_t tmp = array[index1];
     array[index1] = array[index2];
     array[index2] = tmp;
+//
+//    udprint("array [");
+//    for(uint8_t i= 0; i<QUE_SIZE; i++){
+//        if(i != 0) udprint(",");
+//        udprintf("%u",ktk(array[i].key));
+//    }
+//    udprintln("] after");
 }
 
 bool enque(data_t que_data[QUE_SIZE], data_t enq_data, uint8_t *que_head, uint8_t *que_num) {
