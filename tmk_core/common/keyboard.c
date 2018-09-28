@@ -201,6 +201,10 @@ void keyboard_init(void) {
  * This is repeatedly called as fast as possible.
  */
 
+uint16_t ktk(keypos_t key) {
+    return keymap_key_to_keycode(layer_switch_get_layer(key), key);
+}
+
 #define EVENT_QUE_HOLD_TIME 20
 #define QUE_SIZE 8
 typedef keyevent_t data_t;
@@ -275,10 +279,6 @@ void swap_element_in_que(data_t que_data[QUE_SIZE], uint8_t v_index1, uint8_t v_
     uint8_t r_index1 = v_index1 % QUE_SIZE;
     uint8_t r_index2 = v_index2 % QUE_SIZE;
     swap_element_in_array(que_data,r_index1,r_index2);
-}
-
-uint16_t ktk(keypos_t key) {
-    return keymap_key_to_keycode(layer_switch_get_layer(key), key);
 }
 
 void keycode_val_to_name(uint8_t keycode, char *keycode_name){
