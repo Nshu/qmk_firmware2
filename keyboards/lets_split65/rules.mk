@@ -72,6 +72,6 @@ SLEEP_LED_ENABLE = no    # Breathing sleep LED during USB suspend
 
 CUSTOM_MATRIX = yes
 
-LAYOUTS = ortho_4x12
+LAYOUTS = ortho_5x12
 
 DEFAULT_FOLDER = lets_split/rev2
