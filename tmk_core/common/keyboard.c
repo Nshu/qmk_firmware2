@@ -1016,7 +1016,7 @@ bool is_convert_action_event(keyevent_t action_event, bool is_ime_on, keyevent_t
                                             KC_Y,
                                             KC_U
                                     };
-                                    action_exec_by_series_keycode(keycode_series, 2, l_t, a_t);
+                                    action_exec_by_series_keycode(keycode_series, 4, l_t, a_t);
                                     return true;
                                 }
                             }
@@ -1088,7 +1088,7 @@ bool is_convert_action_event(keyevent_t action_event, bool is_ime_on, keyevent_t
                                             KC_Y,
                                             KC_O
                                     };
-                                    action_exec_by_series_keycode(keycode_series, 2, l_t, a_t);
+                                    action_exec_by_series_keycode(keycode_series, 4, l_t, a_t);
                                     return true;
                                 }
                             }
