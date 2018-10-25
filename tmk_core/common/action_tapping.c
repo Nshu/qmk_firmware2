@@ -42,6 +42,7 @@ static void debug_waiting_buffer(void);
  */
 void action_tapping_process(keyrecord_t record)
 {
+
     if (process_tapping(&record)) {
         if (!IS_NOEVENT(record.event)) {
             debug("processed: "); debug_record(record); debug("\n");

@@ -53,6 +53,24 @@ extern debug_config_t debug_config;
 #define debug_mouse     (debug_config.mouse)
 
 
+//user defined debug print
+#ifdef USER_DEBUG
+#define udprint(s)                   print(s)
+#define udprintln(s)                 println(s)
+#define udprintf(fmt, ...)           xprintf(fmt, ##__VA_ARGS__)
+#define udprintv(value, specifier)  udprintf(#value": "#specifier,value)
+#define udprintvln(value, specifier)   udprintf(#value": "#specifier"\n",value)
+
+#else
+#define udprint(s)
+#define udprintln(s)
+#define udprintf(fmt, ...)
+#define udprintv(value, specifier)
+#define udprintvln(value, specifier)
+
+#endif
+
+
 /*
  * Debug print utils
  */
