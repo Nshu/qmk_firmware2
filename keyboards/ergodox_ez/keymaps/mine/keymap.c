@@ -24,7 +24,7 @@ keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 [0] =
 LAYOUT_ergodox(
 
-        KC_NO, KC_F2, KC_F3, KC_F4, KC_F5, KC_F6, KC_NO,
+        DF(0), KC_F2, KC_F3, KC_F4, KC_F5, KC_F6, DF(4),
         KC_F1, KC_LEFT, KC_BSPC, KC_DEL, KC_P, KC_Y, LCTL(KC_C),
         KC_SPC, KC_A, KC_O, KC_E, KC_U, KC_I,
         KC_ENT, KC_Z, KC_Q, KC_J, KC_K, KC_X, LCTL(KC_V),
@@ -106,6 +106,72 @@ LAYOUT_ergodox(
         KC_NO, KC_NO,
         KC_NO,
         KC_NO, KC_NO, KC_NO
+),
+//for US
+[4] =
+LAYOUT_ergodox(
+
+        DF(0), KC_F2, KC_F3, KC_F4, KC_F5, KC_F6, DF(4),
+        KC_F1, KC_LEFT, KC_BSPC, KC_DEL, KC_P, KC_Y, LCTL(KC_C),
+        KC_SPC, KC_A, KC_O, KC_E, KC_U, KC_I,
+        KC_ENT, KC_Z, KC_Q, KC_J, KC_K, KC_X, LCTL(KC_V),
+        KC_LGUI, KC_DOWN, KC_UP, KC_LSFT, KC_LCTL, //KC_MS_L, KC_MS_D,
+        IME_FILTER_OFF, KC_NO,
+        KC_NO,
+        MO(5), IME_OFF, KC_LALT,
+
+        KC_NO, KC_F7, KC_F8, KC_F9, KC_F10, KC_F11, KC_NO,
+        KC_NO, KC_F, KC_G, KC_C, KC_R, KC_RGHT, KC_F12,
+        KC_D, KC_H, KC_T, KC_N, KC_S, KC_ESC,
+        KC_NO, KC_B, KC_M, KC_W, KC_V, KC_L, KC_TAB,
+        KC_RCTL, KC_RSFT, JP_MHEN, JP_HENK, KC_RGUI,
+        KC_NO, KC_NO,
+        KC_NO,
+        KC_RALT, JP_KANA, MO(6)
+),
+[5] =
+LAYOUT_ergodox(
+
+        KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
+        KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_HASH, KC_GRV, LCTL(KC_INS),
+        KC_TRNS,
+KC_BSLS, KC_DOT , KC_COLN, BACKL  , KC_5   ,
+KC_TRNS, KC_1   , KC_2   , KC_3   , KC_4   , KC_LCTL, S(KC_INS),
+        KC_TRNS, KC_TRNS, KC_TRNS,
+        S(KC_CAPS), KC_WH_D,
+        KC_TRNS, KC_TRNS,
+        KC_TRNS,
+        KC_TRNS, KC_TRNS, KC_TRNS,
+
+        KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
+        KC_TRNS, KC_AT, KC_PLUS, KC_ASTR, KC_PERC, KC_TRNS, KC_TRNS,
+        KC_6, BACKL, KC_EQL, KC_MINS, KC_SLSH, KC_TRNS,
+        KC_TRNS, KC_RCTL, KC_7, KC_8, KC_9, KC_0, KC_TRNS,
+        KC_TRNS, KC_TRNS, KC_NO, KC_NO, KC_TRNS,
+        KC_TRNS, KC_TRNS,
+        KC_TRNS,
+        KC_TRNS, KC_TRNS, KC_TRNS
+),
+[6] =
+LAYOUT_ergodox(
+
+        KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
+        KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_EXLM, KC_LALT, KC_TRNS,
+        KC_TRNS, KC_LCBR, KC_LBRC, KC_LPRN, BACKL, KC_LT,
+        KC_TRNS, KC_CIRC, KC_DLR, KC_TILD, KC_PIPE, KC_LSFT, KC_TRNS,
+        KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
+        KC_TRNS, KC_TRNS,
+        KC_TRNS,
+        KC_TRNS, KC_TRNS, KC_TRNS,
+
+        KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
+        KC_TRNS, KC_RALT, KC_QUES, KC_DQT, KC_QUOT, KC_NO, KC_TRNS,
+        KC_GT, BACKL, KC_SCLN, KC_COMM, KC_UNDS, KC_TRNS,
+        KC_TRNS, KC_RSFT, KC_AMPR, KC_RPRN, KC_RBRC, KC_RCBR, KC_TRNS,
+        KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
+        KC_TRNS, KC_TRNS,
+        KC_TRNS,
+        KC_TRNS, KC_TRNS, KC_TRNS
 ),
 
 
