@@ -1015,6 +1015,8 @@ static void setup_usb(void)
  *
  * FIXME: Needs doc
  */
+void print_separate_line(void);
+
 int main(void)  __attribute__ ((weak));
 int main(void)
 {
@@ -1069,6 +1071,7 @@ int main(void)
         #endif
 
         keyboard_task();
+        print_separate_line();
 
 #ifdef MIDI_ENABLE
         MIDI_Device_USBTask(&USB_MIDI_Interface);
@@ -1103,5 +1106,16 @@ uint16_t CALLBACK_USB_GetDescriptor(const uint16_t wValue,
                                     const void** const DescriptorAddress)
 {
   return get_usb_descriptor(wValue, wIndex, DescriptorAddress);
+}
+
+void print_separate_line(){
+    static uint16_t current_time = 0;
+    static uint16_t pre_time = 0;
+    current_time = (timer_read() | 1);
+
+    if(TIMER_DIFF_16(current_time,pre_time) >= 1000){
+        udprintln("===========================================");
+        pre_time = current_time;
+    }
 }
 

@@ -1114,7 +1114,6 @@ bool is_convert_action_event(keyevent_t action_event, bool is_ime_on, keyevent_t
     return false;
 }
 
-
 /** \brief keyboard set leds
  *
  * FIXME: needs doc
