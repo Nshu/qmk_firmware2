@@ -334,6 +334,7 @@ void keyboard_task(void) {
             if (action_event.pressed) {
                 switch (ktk(action_event.key)) {
                     case KC_A ... KC_Z:
+                        //if can't enque
                         if (!enque(hist_que, action_event, &hist_que_head, &hist_que_num)) {
                             deque(hist_que, &hist_que_head, &hist_que_num);
                             enque(hist_que, action_event, &hist_que_head, &hist_que_num);
