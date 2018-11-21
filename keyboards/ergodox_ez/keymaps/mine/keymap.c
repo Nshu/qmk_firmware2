@@ -4,19 +4,7 @@
 #include "version.h"
 #include "keymap_JIS.h"
 #include "keymap_jp.h"
-
-
-enum custom_keycodes {
-    PLACEHOLDER = SAFE_RANGE, // can always be here
-    EPRM,
-    VRSN,
-    RGB_SLD,
-    IME_OFF,
-    IME_FILTER_OFF,
-    LAYER1,
-    LAYER2,
-    BACKL
-};
+#include "macro_keycode.h"
 
 //Assin keys for using as a US keyboard here, and convert US key to JIS key by keymap_JIS.h, 
 const uint16_t PROGMEM
@@ -40,7 +28,7 @@ LAYOUT_ergodox(
         KC_RCTL, KC_RSFT, JP_MHEN, JP_HENK, KC_RGUI,
         KC_NO, KC_NO,
         KC_NO,
-        KC_RALT, JP_KANA, MO(2)
+        KC_RALT, IME_ON, MO(2)
 ),
 [1] =
 LAYOUT_ergodox(
@@ -127,7 +115,7 @@ LAYOUT_ergodox(
         KC_RCTL, KC_RSFT, JP_MHEN, JP_HENK, KC_RGUI,
         KC_NO, KC_NO,
         KC_NO,
-        KC_RALT, JP_KANA, MO(6)
+        KC_RALT, IME_ON, MO(6)
 ),
 [5] =
 LAYOUT_ergodox(
@@ -205,7 +193,22 @@ const macro_t *action_get_macro(keyrecord_t *record, uint8_t id, uint8_t opt) {
 
 extern bool is_ime_on;
 
+void ime_off(){
+    // X_INT2 = X_KANA  IME on
+    SEND_STRING(SS_TAP(X_INT2));
+    // X_GRAVE = X_ZHTG IME toggle = off
+    SEND_STRING(SS_TAP(X_GRAVE));
+    is_ime_on = false;
+}
+void ime_on(){
+    // X_INT2 = X_KANA  IME on
+    SEND_STRING(SS_TAP(X_INT2));
+    is_ime_on = true;
+}
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    static bool is_IME_OFF_key_pressing;
+    static bool is_IME_ON_key_pressing;
+
     switch (keycode) {
         // dynamically generate these.
         case EPRM:
@@ -231,12 +234,44 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             return false;
         case IME_OFF:
             if (record->event.pressed) {
-                // X_INT2 = X_KANA  IME on
-                SEND_STRING(SS_TAP(X_INT2));
-                // X_GRAVE = X_ZHTG IME toggle = off
-                SEND_STRING(SS_TAP(X_GRAVE));
-                is_ime_on = false;
+                is_IME_OFF_key_pressing = true;
+                ime_off();
+
+                if(is_IME_ON_key_pressing) { //IME_ON -> IME_OFF
+                    SEND_STRING(SS_DOWN(X_LCTRL));
+                }
             }
+            else{
+                is_IME_OFF_key_pressing = false;
+
+                //release ctrl and shift
+                SEND_STRING(SS_UP(X_LCTRL));
+                SEND_STRING(SS_UP(X_LSHIFT));
+            }
+            udprintvln(is_ime_on,%d);
+            udprintvln(is_IME_ON_key_pressing,%d);
+            udprintvln(is_IME_OFF_key_pressing,%d);
+            return false;
+        case IME_ON:
+            if (record->event.pressed) {
+                is_IME_ON_key_pressing = true;
+                ime_on();
+
+                if(is_IME_OFF_key_pressing){ //IME_ON -> IME_ON
+                    ime_off();
+                    SEND_STRING(SS_DOWN(X_LSHIFT));
+                }
+            }
+            else{
+                is_IME_ON_key_pressing = false;
+
+                //release ctrl and shift
+                SEND_STRING(SS_UP(X_LCTRL));
+                SEND_STRING(SS_UP(X_LSHIFT));
+            }
+            udprintvln(is_ime_on,%d);
+            udprintvln(is_IME_ON_key_pressing,%d);
+            udprintvln(is_IME_OFF_key_pressing,%d);
             return false;
         case IME_FILTER_OFF:
             if (record->event.pressed) {

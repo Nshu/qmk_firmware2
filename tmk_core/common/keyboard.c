@@ -33,6 +33,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "backlight.h"
 #include "keymap_jp.h"
 #include "action_layer.h"
+#include "macro_keycode.h"
 
 #ifdef BOOTMAGIC_ENABLE
 #   include "bootmagic.h"
@@ -331,6 +332,7 @@ void keyboard_task(void) {
             }
 //            udprint("=====================================\n\n");
 
+            //enque executed key to hist_que
             if (action_event.pressed) {
                 switch (ktk(action_event.key)) {
                     case KC_A ... KC_Z:
@@ -348,7 +350,6 @@ void keyboard_task(void) {
                         unenque(hist_que, &hist_que_head, &hist_que_num);
                         break;
                     case KC_CAPSLOCK:
-                    case JP_KANA:
                     case JP_HENK:
                         is_ime_on = true;
                         que_clear(&hist_que_head, &hist_que_num);
@@ -646,6 +647,8 @@ void unenque_zenkaku(data_t que_data[QUE_SIZE], uint8_t *que_head, uint8_t *que_
 bool is_in_prefix_key(int keycode){
     switch(keycode){
         case MO(0) ... MO(2):
+        case IME_ON:
+        case IME_OFF:
         case KC_LCTRL ... KC_RGUI:
             return true;
 

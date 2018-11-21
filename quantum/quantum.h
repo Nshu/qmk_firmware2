@@ -163,6 +163,11 @@ void matrix_init_user(void);
 void matrix_scan_user(void);
 bool process_action_kb(keyrecord_t *record);
 bool process_record_kb(uint16_t keycode, keyrecord_t *record);
+
+//user func
+void ime_on(void);
+void ime_off(void);
+
 bool process_record_user(uint16_t keycode, keyrecord_t *record);
 
 void reset_keyboard(void);
