@@ -211,6 +211,7 @@ typedef keyevent_t data_t;
 
 uint16_t ktk(keypos_t key) ;
 void swap_element_in_array(data_t *array, uint8_t index1, uint8_t index2);
+void swap_keypos_in_array(data_t *array, uint8_t index1, uint8_t index2);
 bool enque(data_t que_data[QUE_SIZE], data_t enq_data, uint8_t *que_head, uint8_t *que_num) ;
 data_t unenque(data_t que_data[QUE_SIZE], uint8_t *que_head, uint8_t *que_num) ;
 data_t deque(data_t que_data[QUE_SIZE], uint8_t *que_head, uint8_t *que_num) ;
@@ -226,8 +227,10 @@ void action_exec_by_series_keycode(uint16_t *keycode, uint8_t num_of_keycode, ui
 bool is_convert_action_event(keyevent_t action_event, bool is_ime_on, keyevent_t *hist_que, uint8_t *hist_que_head,
                              uint8_t *hist_que_num) ;
 void unenque_zenkaku(data_t que_data[QUE_SIZE], uint8_t *que_head, uint8_t *que_num) ;
-bool is_in_prefix_key(uint16_t keycode);
+bool is_prefix_key(uint16_t keycode);
 void resort_event_que(data_t event_que_data[QUE_SIZE], uint8_t *event_que_head, uint8_t *event_que_num);
+bool is_mo_layer_key(uint16_t keycode);
+bool is_BACKL_keypos(keypos_t keypos);
 
 bool is_ime_on = false;
 
@@ -321,7 +324,7 @@ void keyboard_task(void) {
 //    MATRIX_LOOP_END:
 
     keyevent_t current_que_head = read_que_head(event_que, &event_que_head, &event_que_num);
-    if (current_que_head.key.col != TICK.key.col){ //deque_event != TICK
+    if (current_que_head.key.col != (TICK).key.col){ //deque_event != TICK
         if (TIMER_DIFF_16((timer_read() | 1), current_que_head.time) > EVENT_QUE_HOLD_TIME) {
             keyevent_t action_event = deque(event_que, &event_que_head, &event_que_num);
 
@@ -428,6 +431,11 @@ void swap_element_in_array(data_t *array, uint8_t index1, uint8_t index2){
 //        udprintf("%u",ktk(array[i].key));
 //    }
 //    udprintln("] after");
+}
+void swap_keypos_in_array(data_t *array, uint8_t index1, uint8_t index2){
+    keypos_t tmp = array[index1].key;
+    array[index1].key = array[index2].key;
+    array[index2].key = tmp;
 }
 
 uint16_t ktk(keypos_t key) {
@@ -569,7 +577,7 @@ void action_exec_by_keycode(uint16_t keycode, uint16_t pressed_time, uint16_t re
             }
         }
     }
-    keypos_t keypos = TICK.key;
+    keypos_t keypos = (TICK).key;
     switch (keycode) {
         case KC_A ... KC_Z:
             keypos = atk(keycode);
@@ -647,9 +655,9 @@ void unenque_zenkaku(data_t que_data[QUE_SIZE], uint8_t *que_head, uint8_t *que_
     }
 }
 
-bool is_in_prefix_key(uint16_t keycode){
+bool is_prefix_key(uint16_t keycode){
     switch(keycode){
-        case MO(0) ... MO(2):
+        case QK_MOMENTARY ... QK_MOMENTARY_MAX:
         case IME_ON:
         case IME_OFF:
         case KC_LCTRL ... KC_RGUI:
@@ -660,6 +668,23 @@ bool is_in_prefix_key(uint16_t keycode){
             return false;
     }
 }
+bool is_mo_layer_key(uint16_t keycode){
+    switch(keycode){
+        case QK_MOMENTARY ... QK_MOMENTARY_MAX:
+            return true;
+
+        default:
+            return false;
+    }
+}
+bool is_BACKL_keypos(keypos_t keypos){
+    if((keypos.col == 2 && keypos.row == 4) || \
+       (keypos.col == 2 && keypos.row == 9))
+        return true;
+    else
+        return false;
+}
+
 
 void resort_event_que(data_t event_que_data[QUE_SIZE], uint8_t *event_que_head, uint8_t *event_que_num){
     if(*event_que_num <= 1) return;
@@ -671,18 +696,82 @@ void resort_event_que(data_t event_que_data[QUE_SIZE], uint8_t *event_que_head, 
     for(int v_i = que_last_v_i; v_i > 0; v_i--){
         uint8_t r_i = (*event_que_head + v_i) % QUE_SIZE;
         uint8_t r_i_1 = (*event_que_head + v_i - 1) % QUE_SIZE;
-        if(is_in_prefix_key(ktk(event_que_data[r_i].key)) && \
+        if(is_prefix_key(ktk(event_que_data[r_i].key)) && \
             event_que_data[r_i].pressed){
             if(i_of_first_prefix_key == 255)
                 i_of_first_prefix_key = r_i;
             if((event_que_data[r_i_1].pressed) && \
-                !is_in_prefix_key(ktk(event_que_data[r_i_1].key))){
+                !is_prefix_key(ktk(event_que_data[r_i_1].key))){
                 i_of_key_for_prefixing = r_i_1;
                 break;
             }
         }
     }
-    swap_element_in_array(event_que_data,i_of_first_prefix_key,i_of_key_for_prefixing);
+    swap_keypos_in_array(event_que_data,i_of_first_prefix_key,i_of_key_for_prefixing);
+
+    //BACKL magic
+    //initialize parameter
+    bool has_MO_BACKL_series = false;
+    keypos_t mo_keypos = (TICK).key;
+    keypos_t target_keypos = (TICK).key;
+    uint8_t i_of_mo_for_press;
+    uint8_t i_of_target_key;
+    uint8_t i_of_mo_for_release;
+    static keyevent_t already_enqueued_event = {
+            .pressed = false,
+            .key = { 255, 255},
+            .time = UINT16_MAX
+    };
+    for(int v_i = que_last_v_i; v_i > 0; v_i--){
+        uint8_t r_i__1 = (*event_que_head + v_i + 1) % QUE_SIZE;
+        uint8_t r_i = (*event_que_head + v_i) % QUE_SIZE;
+        uint8_t r_i_1 = (*event_que_head + v_i - 1) % QUE_SIZE;
+
+        keyevent_t prev_event = event_que_data[r_i__1];
+        keyevent_t current_event = event_que_data[r_i];
+        keyevent_t next_event = event_que_data[r_i_1];
+
+        // set parameter
+        if((is_mo_layer_key(ktk(current_event.key))) && \
+           (is_BACKL_keypos(next_event.key))){
+            has_MO_BACKL_series = true;
+            mo_keypos = current_event.key;
+            target_keypos = prev_event.key;
+        }
+        if((is_mo_layer_key(ktk(next_event.key))) && \
+           (is_BACKL_keypos(current_event.key))){
+            has_MO_BACKL_series = true;
+            mo_keypos = next_event.key;
+            target_keypos = prev_event.key;
+        }
+        i_of_mo_for_press = r_i__1;
+        i_of_target_key = r_i;
+        i_of_mo_for_release = r_i_1;
+
+        // execute along parameter
+        if(has_MO_BACKL_series){
+            event_que_data[i_of_mo_for_press].pressed = true;
+            event_que_data[i_of_mo_for_press].key = mo_keypos;
+            event_que_data[i_of_target_key].pressed = true;
+            event_que_data[i_of_target_key].key = target_keypos;
+            event_que_data[i_of_mo_for_release].pressed = false;
+            event_que_data[i_of_mo_for_release].key = mo_keypos;
+
+            already_enqueued_event.key = mo_keypos;
+        }
+    }
+
+    //delete already_enqueued_event
+    for(int v_i = que_last_v_i; v_i > 0; v_i--) {
+        uint8_t r_i = (*event_que_head + v_i) % QUE_SIZE;
+        keyevent_t current_event = event_que_data[r_i];
+        if((current_event.pressed == false) && \
+           (current_event.key.col == already_enqueued_event.key.col) && \
+           (current_event.key.row == already_enqueued_event.key.row)){
+            event_que_data[r_i] = TICK;
+            already_enqueued_event = TICK;
+        }
+    }
 }
 
 void keycode_val_to_name(uint16_t keycode, char *keycode_name){
