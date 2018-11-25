@@ -650,6 +650,7 @@ bool is_in_prefix_key(int keycode){
         case IME_ON:
         case IME_OFF:
         case KC_LCTRL ... KC_RGUI:
+        case BACKL:
             return true;
 
         default:
@@ -660,16 +661,25 @@ bool is_in_prefix_key(int keycode){
 void resort_event_que(data_t event_que_data[QUE_SIZE], uint8_t *event_que_head, uint8_t *event_que_num){
     if(*event_que_num <= 1) return;
     uint8_t que_last_v_i = *event_que_num - 1; // >= 1
+
+    //insert prefix_key in front of former pressed_and_noprefix_event
+    uint8_t i_of_first_prefix_key = 255;
+    uint8_t i_of_key_for_prefixing = 255;
     for(int v_i = que_last_v_i; v_i > 0; v_i--){
         uint8_t r_i = (*event_que_head + v_i) % QUE_SIZE;
         uint8_t r_i_1 = (*event_que_head + v_i - 1) % QUE_SIZE;
         if(is_in_prefix_key(ktk(event_que_data[r_i].key)) && \
             event_que_data[r_i].pressed){
-            // switch i and i-1
-            swap_element_in_array(event_que_data,r_i,r_i_1);
-            if(event_que_data[r_i_1].pressed) break;
+            if(i_of_first_prefix_key == 255)
+                i_of_first_prefix_key = r_i;
+            if((event_que_data[r_i_1].pressed) && \
+                !is_in_prefix_key(ktk(event_que_data[r_i_1].key))){
+                i_of_key_for_prefixing = r_i_1;
+                break;
+            }
         }
     }
+    swap_element_in_array(event_que_data,i_of_first_prefix_key,i_of_key_for_prefixing);
 }
 
 void keycode_val_to_name(uint8_t keycode, char *keycode_name){
