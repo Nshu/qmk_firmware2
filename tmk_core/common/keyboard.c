@@ -218,15 +218,15 @@ data_t read_que_head(data_t que_data[QUE_SIZE], uint8_t *que_head, uint8_t *que_
 data_t read_que_from_last(data_t que_data[QUE_SIZE], uint8_t *que_head, uint8_t *que_num, uint8_t from_last) ;
 void que_clear(uint8_t *que_head, uint8_t *que_num) ;
 void swap_element_in_que(data_t que_data[QUE_SIZE], uint8_t v_index1, uint8_t v_index2);
-void keycode_val_to_name(uint8_t keycode, char *keycode_name);
+void keycode_val_to_name(uint16_t keycode, char *keycode_name);
 void que_print(data_t que_data[QUE_SIZE], char *str, uint8_t *que_head, uint8_t *que_num) ;
-void action_exec_by_keycode(uint8_t keycode, uint16_t pressed_time, uint16_t release_time) ;
-void action_exec_by_series_keycode(uint8_t *keycode, uint8_t num_of_keycode, uint16_t last_event_time,
+void action_exec_by_keycode(uint16_t keycode, uint16_t pressed_time, uint16_t release_time) ;
+void action_exec_by_series_keycode(uint16_t *keycode, uint8_t num_of_keycode, uint16_t last_event_time,
                                    uint16_t current_event_time) ;
 bool is_convert_action_event(keyevent_t action_event, bool is_ime_on, keyevent_t *hist_que, uint8_t *hist_que_head,
                              uint8_t *hist_que_num) ;
 void unenque_zenkaku(data_t que_data[QUE_SIZE], uint8_t *que_head, uint8_t *que_num) ;
-bool is_in_prefix_key(int keycode);
+bool is_in_prefix_key(uint16_t keycode);
 void resort_event_que(data_t event_que_data[QUE_SIZE], uint8_t *event_que_head, uint8_t *event_que_num);
 
 bool is_ime_on = false;
@@ -542,17 +542,18 @@ void que_print(data_t que_data[QUE_SIZE], char *str, uint8_t *que_head, uint8_t 
     udprintln("================");
 }
 
-void action_exec_by_keycode(uint8_t keycode, uint16_t pressed_time, uint16_t release_time) {
+void action_exec_by_keycode(uint16_t keycode, uint16_t pressed_time, uint16_t release_time) {
     // [0]=kc_a's keypos ... [25]= kc_z's keypos [26] = kc_backspace's keypos
     static keypos_t alphabet_to_keypos[27] = {};
-    if (alphabet_to_keypos[0].row == 0) {
+    static bool initial_flag = true;
+    if (initial_flag) {
         for (uint8_t r = 0; r < MATRIX_ROWS; r++) {
             for (uint8_t c = 0; c < MATRIX_COLS; c++) {
                 keypos_t current_keypos = {
                         .row = r,
                         .col = c
                 };
-                uint8_t current_keycode = pgm_read_word(&keymaps[0][r][c]);
+                uint16_t current_keycode = pgm_read_word(&keymaps[0][r][c]);
 //                udprintf("r = %2u. c = %2u, keycode = %3u\n",r,c,current_keycode);
                 switch (current_keycode) {
                     case KC_A ... KC_Z:
@@ -580,7 +581,7 @@ void action_exec_by_keycode(uint8_t keycode, uint16_t pressed_time, uint16_t rel
             break;
     }
 //    udprintln("----------------------------");
-//    for(uint8_t i=0; i<25; i++){
+//    for(uint8_t i=0; i<27; i++){
 //        udprintf("alphabet_to_keypos[%2d] : r = %u, c = %u\n",i,alphabet_to_keypos[i].row,alphabet_to_keypos[i].col);
 //    }
 //    udprintln("----------------------------");
@@ -596,9 +597,11 @@ void action_exec_by_keycode(uint8_t keycode, uint16_t pressed_time, uint16_t rel
             .pressed = false,
             .key = keypos
     });
+
+    initial_flag ^= initial_flag;
 }
 
-void action_exec_by_series_keycode(uint8_t *keycode, uint8_t num_of_keycode, uint16_t last_event_time,
+void action_exec_by_series_keycode(uint16_t *keycode, uint8_t num_of_keycode, uint16_t last_event_time,
                                    uint16_t current_event_time) {
     udprintln("=== enter action_exec_by_series_keycode ===");
     uint16_t pressed_times[num_of_keycode];
@@ -644,7 +647,7 @@ void unenque_zenkaku(data_t que_data[QUE_SIZE], uint8_t *que_head, uint8_t *que_
     }
 }
 
-bool is_in_prefix_key(int keycode){
+bool is_in_prefix_key(uint16_t keycode){
     switch(keycode){
         case MO(0) ... MO(2):
         case IME_ON:
@@ -682,7 +685,7 @@ void resort_event_que(data_t event_que_data[QUE_SIZE], uint8_t *event_que_head, 
     swap_element_in_array(event_que_data,i_of_first_prefix_key,i_of_key_for_prefixing);
 }
 
-void keycode_val_to_name(uint8_t keycode, char *keycode_name){
+void keycode_val_to_name(uint16_t keycode, char *keycode_name){
     static const char keycode_val_to_name[][16] = {
             "KC_NO",
             "KC_ROLL_OVER",
@@ -804,7 +807,7 @@ bool is_convert_action_event(keyevent_t action_event, bool is_ime_on, keyevent_t
                             switch (ktk(last2_event.key)) {
                                 case KC_C: // ex) cca > kka
                                 {
-                                    uint8_t keycode_series[] = {
+                                    uint16_t keycode_series[] = {
                                             KC_BSPC,
                                             KC_BSPC,
                                             KC_K,
@@ -816,7 +819,7 @@ bool is_convert_action_event(keyevent_t action_event, bool is_ime_on, keyevent_t
                                 }
                                 default: // ex) ca > ka
                                 {
-                                    uint8_t keycode_series[] = {
+                                    uint16_t keycode_series[] = {
                                             KC_BSPC,
                                             KC_K,
                                     };
@@ -833,7 +836,7 @@ bool is_convert_action_event(keyevent_t action_event, bool is_ime_on, keyevent_t
                                     switch (current_keycode) {
                                         case KC_I: // tli > texi
                                         {
-                                            uint8_t keycode_series[] = {
+                                            uint16_t keycode_series[] = {
                                                     KC_BSPC,
                                                     KC_E,
                                                     KC_X
@@ -844,7 +847,7 @@ bool is_convert_action_event(keyevent_t action_event, bool is_ime_on, keyevent_t
                                         }
                                         case KC_U: // tlu > toxu
                                         {
-                                            uint8_t keycode_series[] = {
+                                            uint16_t keycode_series[] = {
                                                     KC_BSPC,
                                                     KC_O,
                                                     KC_X
@@ -860,7 +863,7 @@ bool is_convert_action_event(keyevent_t action_event, bool is_ime_on, keyevent_t
                                 case KC_D: {
                                     switch (current_keycode) {
                                         case KC_I: { // dli > dexi
-                                            uint8_t keycode_series[] = {
+                                            uint16_t keycode_series[] = {
                                                     KC_BSPC,
                                                     KC_E,
                                                     KC_X
@@ -875,7 +878,7 @@ bool is_convert_action_event(keyevent_t action_event, bool is_ime_on, keyevent_t
                                 }
                                 case KC_L: // ex) lla > zza
                                 {
-                                    uint8_t keycode_series[] = {
+                                    uint16_t keycode_series[] = {
                                             KC_BSPC,
                                             KC_BSPC,
                                             KC_Z,
@@ -888,7 +891,7 @@ bool is_convert_action_event(keyevent_t action_event, bool is_ime_on, keyevent_t
 
                                 default: // ex) la > za
                                 {
-                                    uint8_t keycode_series[] = {
+                                    uint16_t keycode_series[] = {
                                             KC_BSPC,
                                             KC_Z
                                     };
@@ -910,7 +913,7 @@ bool is_convert_action_event(keyevent_t action_event, bool is_ime_on, keyevent_t
                             switch (ktk(last2_event.key)) {
                                 case KC_C: // ex) ccz > kkya
                                 {
-                                    uint8_t keycode_series[] = {
+                                    uint16_t keycode_series[] = {
                                             KC_BSPC,
                                             KC_BSPC,
                                             KC_K,
@@ -923,7 +926,7 @@ bool is_convert_action_event(keyevent_t action_event, bool is_ime_on, keyevent_t
                                 }
                                 default: // ex) cz > kya
                                 {
-                                    uint8_t keycode_series[] = {
+                                    uint16_t keycode_series[] = {
                                             KC_BSPC,
                                             KC_K,
                                             KC_Y,
@@ -939,7 +942,7 @@ bool is_convert_action_event(keyevent_t action_event, bool is_ime_on, keyevent_t
                             switch (ktk(last2_event.key)) {
                                 case KC_L: // ex) llz > zzya
                                 {
-                                    uint8_t keycode_series[] = {
+                                    uint16_t keycode_series[] = {
                                             KC_BSPC,
                                             KC_BSPC,
                                             KC_Z,
@@ -952,7 +955,7 @@ bool is_convert_action_event(keyevent_t action_event, bool is_ime_on, keyevent_t
                                 }
                                 default: // ex) lz > zya
                                 {
-                                    uint8_t keycode_series[] = {
+                                    uint16_t keycode_series[] = {
                                             KC_BSPC,
                                             KC_Z,
                                             KC_Y,
@@ -964,7 +967,7 @@ bool is_convert_action_event(keyevent_t action_event, bool is_ime_on, keyevent_t
                             }
                         }
                         default: {
-                            uint8_t keycode_series[] = {
+                            uint16_t keycode_series[] = {
                                     KC_Y,
                                     KC_A
                             };
@@ -982,7 +985,7 @@ bool is_convert_action_event(keyevent_t action_event, bool is_ime_on, keyevent_t
                             switch (ktk(last2_event.key)) {
                                 case KC_C: // ex) cck > kkyu
                                 {
-                                    uint8_t keycode_series[] = {
+                                    uint16_t keycode_series[] = {
                                             KC_BSPC,
                                             KC_BSPC,
                                             KC_K,
@@ -995,7 +998,7 @@ bool is_convert_action_event(keyevent_t action_event, bool is_ime_on, keyevent_t
                                 }
                                 default: // ex) ck > kyu
                                 {
-                                    uint8_t keycode_series[] = {
+                                    uint16_t keycode_series[] = {
                                             KC_BSPC,
                                             KC_K,
                                             KC_Y,
@@ -1011,7 +1014,7 @@ bool is_convert_action_event(keyevent_t action_event, bool is_ime_on, keyevent_t
                             switch (ktk(last2_event.key)) {
                                 case KC_L: // ex) llk > zzyu
                                 {
-                                    uint8_t keycode_series[] = {
+                                    uint16_t keycode_series[] = {
                                             KC_BSPC,
                                             KC_BSPC,
                                             KC_Z,
@@ -1024,7 +1027,7 @@ bool is_convert_action_event(keyevent_t action_event, bool is_ime_on, keyevent_t
                                 }
                                 default: // ex) lk > zyu
                                 {
-                                    uint8_t keycode_series[] = {
+                                    uint16_t keycode_series[] = {
                                             KC_BSPC,
                                             KC_Z,
                                             KC_Y,
@@ -1036,7 +1039,7 @@ bool is_convert_action_event(keyevent_t action_event, bool is_ime_on, keyevent_t
                             }
                         }
                         default: {
-                            uint8_t keycode_series[] = {
+                            uint16_t keycode_series[] = {
                                     KC_Y,
                                     KC_U
                             };
@@ -1054,7 +1057,7 @@ bool is_convert_action_event(keyevent_t action_event, bool is_ime_on, keyevent_t
                             switch (ktk(last2_event.key)) {
                                 case KC_C: // ex) ccq > kkyo
                                 {
-                                    uint8_t keycode_series[] = {
+                                    uint16_t keycode_series[] = {
                                             KC_BSPC,
                                             KC_BSPC,
                                             KC_K,
@@ -1067,7 +1070,7 @@ bool is_convert_action_event(keyevent_t action_event, bool is_ime_on, keyevent_t
                                 }
                                 default: // ex) cq > kyo
                                 {
-                                    uint8_t keycode_series[] = {
+                                    uint16_t keycode_series[] = {
                                             KC_BSPC,
                                             KC_K,
                                             KC_Y,
@@ -1083,7 +1086,7 @@ bool is_convert_action_event(keyevent_t action_event, bool is_ime_on, keyevent_t
                             switch (ktk(last2_event.key)) {
                                 case KC_L: // ex) llq > zzyo
                                 {
-                                    uint8_t keycode_series[] = {
+                                    uint16_t keycode_series[] = {
                                             KC_BSPC,
                                             KC_BSPC,
                                             KC_Z,
@@ -1096,7 +1099,7 @@ bool is_convert_action_event(keyevent_t action_event, bool is_ime_on, keyevent_t
                                 }
                                 default: // ex) lq > zyo
                                 {
-                                    uint8_t keycode_series[] = {
+                                    uint16_t keycode_series[] = {
                                             KC_BSPC,
                                             KC_Z,
                                             KC_Y,
@@ -1108,7 +1111,7 @@ bool is_convert_action_event(keyevent_t action_event, bool is_ime_on, keyevent_t
                             }
                         }
                         default: {
-                            uint8_t keycode_series[] = {
+                            uint16_t keycode_series[] = {
                                     KC_Y,
                                     KC_O
                             };
