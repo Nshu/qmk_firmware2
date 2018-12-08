@@ -9,6 +9,7 @@ endif
 
 TMK_COMMON_SRC +=	$(COMMON_DIR)/host.c \
 	$(COMMON_DIR)/keyboard.c \
+	$(COMMON_DIR)/que_original.c \
 	$(COMMON_DIR)/action.c \
 	$(COMMON_DIR)/action_tapping.c \
 	$(COMMON_DIR)/action_macro.c \
