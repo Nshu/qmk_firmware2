@@ -34,7 +34,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "keymap_jp.h"
 #include "action_layer.h"
 #include "macro_keycode.h"
-#include "que_original.h"
+#include "que_module/que_module.h"
 
 #ifdef BOOTMAGIC_ENABLE
 #   include "bootmagic.h"

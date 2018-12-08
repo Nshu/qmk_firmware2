@@ -11,3 +11,6 @@
 [submodule "lib/googletest"]
 	path = lib/googletest
 	url = https://github.com/google/googletest
+[submodule "tmk_core/common/que_module"]
+	path = tmk_core/common/que_module
+	url = https://github.com/Nshu/que_module.git
