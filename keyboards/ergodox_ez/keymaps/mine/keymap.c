@@ -21,7 +21,7 @@ LAYOUT_ergodox(
 								KC_NO,
 						MO(1), IME_OFF, KC_LALT,
 
-        KC_NO, KC_F7, KC_F8, KC_F9, KC_F10, KC_F11, KC_NO,
+        MOD_CLR, KC_F7, KC_F8, KC_F9, KC_F10, KC_F11, KC_NO,
         KC_NO, KC_F, KC_G, KC_C, KC_R, KC_RGHT, KC_F12,
 		KC_D, KC_H, KC_T, KC_N, KC_S, KC_ESC,
         KC_NO, KC_B, KC_M, KC_W, KC_V, KC_L, KC_TAB,
@@ -284,6 +284,18 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             return false;
         case BACKL:
             if (record->event.pressed) {
+            }
+            return false;
+        case MOD_CLR:
+            if (record->event.pressed) {
+                SEND_STRING(SS_UP(X_LCTRL));
+                SEND_STRING(SS_UP(X_LSHIFT));
+                SEND_STRING(SS_UP(X_LALT));
+                SEND_STRING(SS_UP(X_LGUI));
+                SEND_STRING(SS_UP(X_RCTRL));
+                SEND_STRING(SS_UP(X_RSHIFT));
+                SEND_STRING(SS_UP(X_RALT));
+                SEND_STRING(SS_UP(X_RGUI));
             }
             return false;
     }

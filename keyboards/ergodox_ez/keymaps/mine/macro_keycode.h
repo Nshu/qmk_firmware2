@@ -15,7 +15,8 @@ enum custom_keycodes {
     IME_FILTER_OFF,
     LAYER1,
     LAYER2,
-    BACKL
+    BACKL,
+    MOD_CLR
 };
 
 #endif //QMK_FIRMWARE2_MACTRO_H
